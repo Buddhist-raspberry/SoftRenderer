@@ -5,7 +5,7 @@
 #include "model.h"
 #include "geometry.h"
 #include "our_gl.h"
-
+#include "assimp/camera.h"
 Model *model        = NULL;
 
 const int width  = 800;
