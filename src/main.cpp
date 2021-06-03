@@ -1,12 +1,16 @@
 #include "pipeline.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
+#include <string>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image/stb_image.h>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image/stb_image_write.h>
 
 #include "veccolor.h"
+
+#include "SRScene.h"
+
 
 const int width = 800;
 const int height = 600;
@@ -19,7 +23,23 @@ glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
 
 Pipeline* p = Pipeline::getInstance();
 
+
+void assimpTest() {
+	char* model_name = "../obj/boggie/body.obj";
+	SRScene* scene = new SRScene();
+	if (scene->ReadSceneFromFile(model_name)) {
+		SRMesh * mesh = scene->GetMesh(0);
+		if (mesh) {
+			std::cout<<"Name: " << mesh->mName << std::endl;
+		}
+	}
+	//delete scene;
+}
+
 int main(int argc, char** argv) {
+	assimpTest();
+	return 0;
+
 	if (2 > argc) {
 		std::cerr << "Usage: " << argv[0] << "obj/model.obj" << std::endl;
 		return 1;
