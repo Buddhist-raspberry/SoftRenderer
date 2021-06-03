@@ -1,7 +1,6 @@
 #ifndef __PIPELINE_H__
 #define __PIPELINE_H__
 #include <glm/glm.hpp>
-#include "tgaimage.h"
 #include "shader.h"
 #include "model.h"
 
@@ -49,7 +48,13 @@ public:  //顶点或向量变换相关函数
 	glm::vec4 ObjectToWorldDir(const glm::vec4& dir); 
 
 public: 
-	void Render(Model* model, ShaderBase* shader, TGAImage* frame); //渲染一个模型到图片
+	void Render(Model* model, ShaderBase* shader, unsigned char *colorbuffer); //渲染一个模型到图片
+
+public:
+	//设置背景颜色
+	void SetBGColor(glm::vec4 color) {
+		backgroundColor = color;
+	}
 
 private:
 	static Pipeline* instance;
@@ -70,10 +75,15 @@ private:
 	//深度缓冲区
 	float *zbuffer=nullptr;
 
+	//颜色
+	glm::vec4 backgroundColor; //背景颜色
+
 	glm::vec3 barycentric(glm::vec2 A, glm::vec2 B, glm::vec2 C, glm::vec2 P); //求点在三角形的重心坐标
 	bool culling(glm::mat3x3 &ndc);		//剔除
-	void triangle(struct vert_out* attributes, ShaderBase *shader, TGAImage *image, float *zbuffer); //绘制一个三角形
+	void triangle(struct vert_out* attributes, ShaderBase *shader, unsigned char *colorbuffer, float *zbuffer); //绘制一个三角形
 	void clearZbuffer();  //清空深度缓冲区
+	void clearColorbuffer(unsigned char *colorbuffer,const glm::vec4& color); //清空颜色缓冲区
+	void setPixel(unsigned char* colorbuffer,int x,int y, const glm::vec4& color); 
 	 
 };
 

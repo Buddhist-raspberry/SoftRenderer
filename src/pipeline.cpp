@@ -87,16 +87,16 @@ glm::vec3 Pipeline::barycentric(glm::vec2 A, glm::vec2 B, glm::vec2 C, glm::vec2
 }
 
 bool Pipeline::culling(glm::mat3x3 &ndc) {
+	//std::cout << glm::to_string(ndc) << std::endl;
 	for (int i = 0; i < 3; i++) {
 		int check = 0;
-		if (ndc[i].z < 0.0f) check |= 1;
-		if (ndc[i].z > 1.0f) check |= 2;
+		if (ndc[i].z < 1.0f) check |= 1;
+		if (ndc[i].z > 2.0f) check |= 2;
 		if (ndc[i].x < -1.0f) check |= 4;
 		if (ndc[i].x > 1.0f) check |= 8;
 		if (ndc[i].y < -1.0f) check |= 16;
 		if (ndc[i].y > 1.0f) check |= 32;
 		if (check == 0) {
-			std::cout << glm::to_string(ndc) << std::endl;
 			return false;
 
 		}
@@ -105,7 +105,7 @@ bool Pipeline::culling(glm::mat3x3 &ndc) {
 }
 
 
-void Pipeline::triangle(struct vert_out* attributes, ShaderBase *shader, TGAImage *image, float *zbuffer) {
+void Pipeline::triangle(struct vert_out* attributes, ShaderBase *shader, unsigned char *colorbuffer, float *zbuffer) {
 
 	glm::mat3x2 uv_tri;   //三角形UV矩阵
 	glm::mat3x4 normal_tri;  //三角形顶点法线矩阵 
@@ -122,7 +122,7 @@ void Pipeline::triangle(struct vert_out* attributes, ShaderBase *shader, TGAImag
 		ndc_tri[i] = tmp / tmp[3]; //齐次除法
 	}
 
-	//if(culling(ndc_tri)) return;
+	if(culling(ndc_tri)) return; //剔除完全不在视锥体内的三角形
 
 	glm::mat3x4 viewclipPos_tri = ViewportMatrix*clipPos_tri; //视锥体内坐标
 	glm::mat3x2 screenPos_tri;  //屏幕空间坐标
@@ -137,7 +137,7 @@ void Pipeline::triangle(struct vert_out* attributes, ShaderBase *shader, TGAImag
 
 	glm::vec2 bboxmin(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
 	glm::vec2 bboxmax(-std::numeric_limits<float>::max(), -std::numeric_limits<float>::max());
-	glm::vec2 clamp(image->get_width() - 1, image->get_height() - 1);
+	glm::vec2 clamp(width_viewport - 1, height_viewport - 1);
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 2; j++) {
 			bboxmin[j] = std::max(0.f, std::min(bboxmin[j], screenPos_tri[i][j]));
@@ -145,7 +145,6 @@ void Pipeline::triangle(struct vert_out* attributes, ShaderBase *shader, TGAImag
 		}
 	}
 	glm::ivec2 P;
-	TGAColor color;
 	for (P.x = bboxmin.x; P.x <= bboxmax.x; P.x++) {
 		for (P.y = bboxmin.y; P.y <= bboxmax.y; P.y++) {
 
@@ -159,7 +158,7 @@ void Pipeline::triangle(struct vert_out* attributes, ShaderBase *shader, TGAImag
 
 			//深度测试
 			float depth_frag = glm::dot(glm::row(clipPos_tri, 2), bc_clip);
-			if (bc_screen.x < 0 || bc_screen.y < 0 || bc_screen.z<0 || zbuffer[P.x + P.y*image->get_width()]>depth_frag) continue;
+			if (bc_screen.x < 0 || bc_screen.y < 0 || bc_screen.z<0 || zbuffer[P.x + P.y*width_viewport]>depth_frag) continue;
 			
 			//用重心坐标对顶点属性插值得到片元属性
 			frag_in attri_frag;
@@ -171,12 +170,11 @@ void Pipeline::triangle(struct vert_out* attributes, ShaderBase *shader, TGAImag
 
 			//片元着色
 			glm::vec4 color_frag = shader->fragment(attri_frag);
-			color.bgra[2] = (int)(color_frag.x *255);
-			color.bgra[1] = (int)(color_frag.y * 255);
-			color.bgra[0] = (int)(color_frag.z * 255);
-			color.bgra[3] = (int)(color_frag.w * 255);
-			zbuffer[P.x + P.y*image->get_width()] = depth_frag;
-			image->set(P.x, P.y, color);
+			for (int i = 0; i < 4; i++) {
+				//colorbuffer[(P.x + P.y*width_viewport - 1) * 4 + i] = (unsigned char)(color_frag[i] * 255.0f);
+				setPixel(colorbuffer, P.x, P.y, color_frag);
+			}
+			zbuffer[P.x + P.y*width_viewport] = depth_frag;
 		}
 	}
 }
@@ -186,15 +184,35 @@ void Pipeline::clearZbuffer() {
 }
 
 
-void Pipeline::Render(Model* model, ShaderBase* shader, TGAImage* frame) {
+
+void Pipeline::clearColorbuffer(unsigned char *colorbuffer,const glm::vec4& color) {
+	unsigned char c[4];
+	for (int i = 0; i < 4; i++) {
+		c[i] = (unsigned int)(color[i] * 255.0f) ;
+	}
+	for (int i = 0; i < width_viewport*height_viewport; i++) {
+		memcpy(colorbuffer + (4 * i), c, sizeof(unsigned char) * 4);
+	}
+}
+
+void Pipeline::setPixel(unsigned char* colorbuffer, int x, int y, const glm::vec4& color) {
+	unsigned char c[4];
+	for (int i = 0; i < 4; i++) {
+		c[i] = (unsigned int)(color[i] * 255.0f);
+	}
+	memcpy(colorbuffer + (4 * (x+width_viewport*y-1)), c, sizeof(unsigned char) * 4);
+}
+
+void Pipeline::Render(Model* model, ShaderBase* shader, unsigned char *colorbuffer) {
 	clearZbuffer();
+	clearColorbuffer(colorbuffer,backgroundColor);
 	for (int i = 0; i < model->nfaces(); i++) {
 		struct vert_out attributes[3];
 		for (int j = 0; j < 3; j++) {
 			struct vert_in v(model->vert(i,j),model->uv(i,j),model->normal(i,j));
 			attributes[j] = shader->vertex(v);
 		}
-		triangle(attributes,shader, frame, zbuffer);
+		triangle(attributes,shader, colorbuffer, zbuffer);
 	}
 }
 
