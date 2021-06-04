@@ -1,7 +1,7 @@
 #ifndef __PIPELINE_H__
 #define __PIPELINE_H__
 #include <glm/glm.hpp>
-#include "shader.h"
+#include "Shader.h"
 #include "SRMesh.h"
 
 class Pipeline //‰÷»æπ‹œﬂ¿‡

@@ -1,5 +1,5 @@
-#include "shader.h"
-#include "pipeline.h"
+#include "Shader.h"
+#include "Pipeline.h"
 
 
 struct vert_out ShaderBase::vertex(struct vert_in vert) {

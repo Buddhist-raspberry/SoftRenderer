@@ -1,6 +1,7 @@
 #ifndef __VEC_COLOR_H__
 #define __VEC_COLOR_H__
 #include <glm/glm.hpp>
+
 namespace VecColor {
 	const glm::vec4 White(1.0f, 1.0f, 1.0f, 1.0f);
 	const glm::vec4 Black(0, 0, 0, 1.0f);

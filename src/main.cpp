@@ -1,9 +1,10 @@
-#include "pipeline.h"
-#include "veccolor.h"
+#include "Pipeline.h"
+#include "VecColor.h"
 #include "SRScene.h"
 
 #include <iostream>
 #include <string>
+
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image/stb_image.h>
 #define STB_IMAGE_WRITE_IMPLEMENTATION

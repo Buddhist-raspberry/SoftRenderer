@@ -8,7 +8,6 @@ set (SoftRenderer_VERSION_MINOR 0)
 # C++ 11 is required
 set(CMAKE_CXX_STANDARD 11)
 
-
 include_directories(include)
 include_directories(${PROJECT_SOURCE_DIR}/external/include)
 

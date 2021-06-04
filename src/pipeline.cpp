@@ -1,4 +1,4 @@
-#include "pipeline.h"
+#include "Pipeline.h"
 #include <glm/gtc/matrix_access.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <glm/gtx/transform.hpp>
