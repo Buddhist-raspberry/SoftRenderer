@@ -49,6 +49,9 @@ public:  //顶点或向量变换相关函数
 
 public: 
 	void Render(SRMesh* mesh, ShaderBase* shader, unsigned char *colorbuffer); //渲染一个模型到图片
+	void MoveForward(float distance); /*前后移动*/
+	void MoveUp(float distance); /*上下移动*/
+	void MoveRight(float distance); /*左右移动*/
 
 public:
 	//设置背景颜色
@@ -73,7 +76,7 @@ private:
 	//变换参数
 	int x_viewport, y_viewport, width_viewport, height_viewport;
 	float FoV,aspect_ratio,zNear,zFar;
-	glm::vec3 eye, center, up;
+	glm::vec3 eye, center, up ,right,forward ;
 
 	//深度缓冲区
 	float *zbuffer=nullptr;

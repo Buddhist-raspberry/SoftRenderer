@@ -23,10 +23,12 @@ glm::vec3    center(0, 0, 0);
 glm::vec3        up(0, 1, 0);
 glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
 
-Pipeline* p = Pipeline::getInstance();
+const float moveSpeed = 0.5f;
+
+Pipeline* pipeline = Pipeline::getInstance();
 
 
-void runSDL(unsigned char * colorbuffer) {
+void runSDL(unsigned char * colorbuffer,SRMesh* mesh,ShaderBase* shader) {
 	SDL_Window *window = nullptr;
 	SDL_Renderer *render = nullptr;
 	SDL_Surface * surface = nullptr;
@@ -61,9 +63,79 @@ void runSDL(unsigned char * colorbuffer) {
 	SDL_UpdateWindowSurface(window);
 
 	while (true) {
+		bool quit = false;
+		bool update = false;
 		SDL_PollEvent(&event);
-		if (event.type == SDL_QUIT)
+		switch (event.type)
+		{
+		case SDL_QUIT:
+			quit = true;
 			break;
+		case SDL_KEYDOWN:
+			switch (event.key.state) {
+				case SDL_PRESSED:
+					switch (event.key.keysym.sym) {
+						case SDL_KeyCode::SDLK_w:
+							std::cout << "Key W Pressed!\n";
+							update = true;
+							pipeline->MoveForward(moveSpeed);
+							break;
+						case SDL_KeyCode::SDLK_s:
+							std::cout << "Key S Pressed!\n";
+							update = true;
+							pipeline->MoveForward(-moveSpeed);
+							break;
+						case SDL_KeyCode::SDLK_a:
+							std::cout << "Key A Pressed!\n";
+							update = true;
+							pipeline->MoveRight(moveSpeed);
+							break;
+						case SDL_KeyCode::SDLK_d:
+							std::cout << "Key D Pressed!\n";
+							update = true;
+							pipeline->MoveRight(-moveSpeed);
+							break;
+						case SDL_KeyCode::SDLK_q:
+							std::cout << "Key Q Pressed!\n";
+							update = true;
+							pipeline->MoveUp(moveSpeed);
+							break;
+						case SDL_KeyCode::SDLK_e:
+							std::cout << "Key E Pressed!\n";
+							update = true;
+							pipeline->MoveUp(-moveSpeed);
+							break;
+						case SDL_KeyCode::SDLK_ESCAPE:
+							quit = true;
+							break;
+						default:
+							break;
+					}
+					break;
+				default:
+					break;
+			}
+			break;
+		default:
+			break;
+		}
+		if (quit)	break;
+		if (update) {
+			pipeline->Render(mesh, shader, colorbuffer);
+
+			SDL_LockSurface(surface);
+			Uint32* destPixels = (Uint32*)surface->pixels;
+			for (int i = 0; i < width*height; i++) {
+				//RGBA To ARGB
+				Uint32 color = (Uint32)colorbuffer[i * 4 + 3] << 24 | (Uint32)colorbuffer[i * 4] << 16 |
+					(Uint32)colorbuffer[i * 4 + 1] << 8 | (Uint32)colorbuffer[i * 4 + 2];
+				memcpy(destPixels + i, &color, sizeof(Uint32));
+			}
+			//memcpy(destPixels , colorbuffer, sizeof(Uint32)*width*height);
+			SDL_UnlockSurface(surface);
+			SDL_UpdateWindowSurface(window);
+
+		}
 		
 	}
 	SDL_DestroyRenderer(render);
@@ -76,10 +148,10 @@ int main(int argc, char** argv) {
 		std::cerr << "Usage: " << argv[0] << "obj/model.obj" << std::endl;
 		return 1;
 	}
-	p->SetModel(modelMatrix);
-	p->SetView(eye, center, up);
-	p->SetProjection(60.0f, width / height, 0.1f, 10.0f);
-	p->SetViewport(0, 0, width, height);
+	pipeline->SetModel(modelMatrix);
+	pipeline->SetView(eye, center, up);
+	pipeline->SetProjection(60.0f, width / height, 0.1f, 10.0f);
+	pipeline->SetViewport(0, 0, width, height);
 
 	char* model_name = argv[1];
 	//char* model_name = "../obj/boggie/body.obj";
@@ -105,9 +177,9 @@ int main(int argc, char** argv) {
 
 	ShaderUV* shader=new ShaderUV();
 
-	p->SetBGColor(VecColor::LightSlateBlue);
+	pipeline->SetBGColor(VecColor::LightSlateBlue);
 	//p->FillColor(colorbuffer,glm::vec4(0,0,1,0));
-	p->Render(mesh, shader, colorbuffer);
+	pipeline->Render(mesh, shader, colorbuffer);
 	std::string result_name = "result.png";
 
 	if (argc >= 3) {
@@ -115,7 +187,7 @@ int main(int argc, char** argv) {
 	}
 	stbi_write_png(result_name.c_str(), width, height, 4, colorbuffer, 0);
 
-	runSDL(colorbuffer);
+	runSDL(colorbuffer,mesh,shader);
 
 	delete scene;
 	delete shader;

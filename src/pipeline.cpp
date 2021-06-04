@@ -57,11 +57,16 @@ void Pipeline::SetProjection(float FoV, float aspect_ratio, float zNear, float z
 void Pipeline::SetView(const glm::vec3& eye, const glm::vec3& center, const glm::vec3& up) {
 	this->eye = eye;
 	this->center = center;
-	this->up = up;
 
 	glm::vec3 z = glm::normalize(center - eye);
 	glm::vec3 x = glm::normalize(glm::cross(z, up));
 	glm::vec3 y = glm::normalize(glm::cross(x, z));
+
+	this->forward = z;
+	this->right = x;
+	this->up = y;
+
+
 	glm::mat4x4 CameraMatrix = glm::mat4x4(1.0f);
 	CameraMatrix[0] = glm::vec4(x, 0);
 	CameraMatrix[1] = glm::vec4(y, 0);
@@ -241,4 +246,16 @@ glm::vec4 Pipeline::ObjectToWorldDir(const glm::vec3& dir) {
 
 glm::vec4 Pipeline::ObjectToWorldDir(const glm::vec4& dir) {
 	return glm::transpose(glm::inverse(ModelMatrix))*dir;
+}
+
+void Pipeline::MoveForward(float distance) {
+	this->SetView(eye + distance * forward, center, up);
+}
+
+void Pipeline::MoveUp(float distance) {
+	this->SetView(eye + distance * up, center + distance * up, up);
+}
+
+void Pipeline::MoveRight(float distance) {
+	this->SetView(eye + distance * right, center + distance * right, up);
 }
