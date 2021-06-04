@@ -24,6 +24,7 @@ glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
 
 Pipeline* p = Pipeline::getInstance();
 
+
 void runSDL(unsigned char * colorbuffer) {
 	SDL_Window *window = nullptr;
 	SDL_Renderer *render = nullptr;
@@ -34,7 +35,7 @@ void runSDL(unsigned char * colorbuffer) {
 		std::cout << SDL_GetError() << std::endl;
 		return;
 	}
-	window = SDL_CreateWindow("SoftRenderer", 100, 100,width, height, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow("SoftRenderer", 100, 50,width, height, SDL_WINDOW_SHOWN);
 	if (window == nullptr) {
 		std::cout << SDL_GetError() << std::endl;
 		return;
@@ -48,7 +49,13 @@ void runSDL(unsigned char * colorbuffer) {
 
 	SDL_LockSurface(surface);
 	Uint32* destPixels = (Uint32*)surface->pixels;
-	memcpy(destPixels, colorbuffer, sizeof(Uint32)*width*height);
+	for (int i = 0; i < width*height; i++) {
+		//RGBA To ARGB
+		Uint32 color = (Uint32)colorbuffer[i*4+3] <<24 | (Uint32)colorbuffer[i * 4 ] << 16 |
+			(Uint32)colorbuffer[i * 4 +1 ] << 8 | (Uint32)colorbuffer[i * 4 + 2] ;
+		memcpy(destPixels+i, &color, sizeof(Uint32));
+	}
+	//memcpy(destPixels , colorbuffer, sizeof(Uint32)*width*height);
 	SDL_UnlockSurface(surface);
 	SDL_UpdateWindowSurface(window);
 
@@ -98,6 +105,7 @@ int main(int argc, char** argv) {
 	ShaderUV* shader=new ShaderUV();
 
 	p->SetBGColor(VecColor::LightSlateBlue);
+	//p->FillColor(colorbuffer,glm::vec4(0,0,1,0));
 	p->Render(mesh, shader, colorbuffer);
 	std::string result_name = "result.png";
 
