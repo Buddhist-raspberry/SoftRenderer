@@ -1,19 +1,20 @@
 #include "pipeline.h"
-#include <glm/gtc/matrix_transform.hpp>
+#include "veccolor.h"
+#include "SRScene.h"
+
 #include <iostream>
 #include <string>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image/stb_image.h>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image/stb_image_write.h>
+#include <glm/gtc/matrix_transform.hpp>
 
-#include "veccolor.h"
 
-#include "SRScene.h"
 
 
 const int width = 800;
-const int height = 600;
+const int height = 800;
 
 glm::vec3 light_dir(1, 1, 1);
 glm::vec3       eye(1, 1, 2);
@@ -24,21 +25,8 @@ glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
 Pipeline* p = Pipeline::getInstance();
 
 
-void assimpTest() {
-	char* model_name = "../obj/boggie/body.obj";
-	SRScene* scene = new SRScene();
-	if (scene->ReadSceneFromFile(model_name)) {
-		SRMesh * mesh = scene->GetMesh(0);
-		if (mesh) {
-			std::cout<<"Name: " << mesh->mName << std::endl;
-		}
-	}
-	//delete scene;
-}
 
 int main(int argc, char** argv) {
-	assimpTest();
-	return 0;
 
 	if (2 > argc) {
 		std::cerr << "Usage: " << argv[0] << "obj/model.obj" << std::endl;
@@ -51,22 +39,39 @@ int main(int argc, char** argv) {
 
 	char* model_name = argv[1];
 	//char* model_name = "../obj/boggie/body.obj";
-	Model* model = new Model(model_name);
+	SRMesh * mesh;
 
-	//TGAImage *frame = new TGAImage(width, height, TGAImage::RGB);
+	SRScene* scene = new SRScene();
+	if (scene->ReadSceneFromFile(model_name)) {
+		mesh = scene->GetMesh(0);
+		if (mesh) {
+			std::cout << "Name: " << mesh->mName << std::endl;
+		}
+		else {
+			std::cerr << "No mesh found in file!\n" << std::endl;
+			return 1;
+		}
+	}
+	else {
+		std::cerr << "Read scene from file failed!\n" << std::endl;
+		return 1;
+	}
+
 	unsigned char * colorbuffer = new unsigned char[4 * width*height];
 
 	ShaderUV* shader=new ShaderUV();
 
 	p->SetBGColor(VecColor::LightSlateBlue);
-	p->Render(model, shader, colorbuffer);
-	std::string result_name = "uv.png";
+	p->Render(mesh, shader, colorbuffer);
+	std::string result_name = "result.png";
 
+	if (argc >= 3) {
+		result_name = argv[2];
+	}
 	stbi_write_png(result_name.c_str(), width, height, 4, colorbuffer, 0);
 
-	delete model;
+	delete scene;
 	delete shader;
-	//delete frame;
 	stbi_image_free(colorbuffer);
 	return 0;
 }

@@ -2,7 +2,7 @@
 #define __PIPELINE_H__
 #include <glm/glm.hpp>
 #include "shader.h"
-#include "model.h"
+#include "SRMesh.h"
 
 class Pipeline //渲染管线类
 {
@@ -48,7 +48,7 @@ public:  //顶点或向量变换相关函数
 	glm::vec4 ObjectToWorldDir(const glm::vec4& dir); 
 
 public: 
-	void Render(Model* model, ShaderBase* shader, unsigned char *colorbuffer); //渲染一个模型到图片
+	void Render(SRMesh* mesh, ShaderBase* shader, unsigned char *colorbuffer); //渲染一个模型到图片
 
 public:
 	//设置背景颜色

@@ -203,17 +203,20 @@ void Pipeline::setPixel(unsigned char* colorbuffer, int x, int y, const glm::vec
 	memcpy(colorbuffer + (4 * (x+width_viewport*y-1)), c, sizeof(unsigned char) * 4);
 }
 
-void Pipeline::Render(Model* model, ShaderBase* shader, unsigned char *colorbuffer) {
+void Pipeline::Render(SRMesh* mesh, ShaderBase* shader, unsigned char *colorbuffer) {
+	std::cout << "\nStart rendering \"" << mesh->mName << "\"!\n";
 	clearZbuffer();
 	clearColorbuffer(colorbuffer,backgroundColor);
-	for (int i = 0; i < model->nfaces(); i++) {
+	for (int i = 0; i < mesh->nFaces(); i++) {
 		struct vert_out attributes[3];
 		for (int j = 0; j < 3; j++) {
-			struct vert_in v(model->vert(i,j),model->uv(i,j),model->normal(i,j));
+			struct vert_in v(mesh->GetVert(i,j),mesh->GetUV(i,j),mesh->GetNormal(i,j));
 			attributes[j] = shader->vertex(v);
 		}
 		triangle(attributes,shader, colorbuffer, zbuffer);
 	}
+
+	std::cout << "Finish rendering \"" << mesh->mName << "\"!\n";
 }
 
 glm::vec4 Pipeline::ObjectToClipPos(const glm::vec3& pos) {
