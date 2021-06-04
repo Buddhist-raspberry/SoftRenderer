@@ -1,6 +1,6 @@
 #ifndef __SHADER_H__
 #define __SHADER_H__
-#include <glm/glm.hpp>
+#include "Texture.h"
 
 
 //顶点着色器的输入
@@ -67,6 +67,13 @@ public:
 //UV着色器
 class ShaderUV:public ShaderBase {
 public:
+	glm::vec4 fragment(struct frag_in pixel) override;
+};
+
+//基本纹理着色器
+class ShaderTexture :public ShaderBase {
+public:
+	Texture2D* mainTex;
 	glm::vec4 fragment(struct frag_in pixel) override;
 };
 

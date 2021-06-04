@@ -18,3 +18,8 @@ glm::vec4 ShaderUV::fragment(struct frag_in pixel) {
 	glm::vec4 color = glm::vec4(pixel.uv.x, pixel.uv.y, 0, 1.0f);
 	return color;
 }
+
+glm::vec4 ShaderTexture::fragment(struct frag_in pixel) {
+	glm::vec4 color = mainTex->sample(pixel.uv);
+	return color;
+}
