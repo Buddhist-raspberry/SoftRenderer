@@ -10,11 +10,11 @@
 #include <stb_image/stb_image_write.h>
 #include <glm/gtc/matrix_transform.hpp>
 
-
+#include <SDL2/SDL.h>
 
 
 const int width = 800;
-const int height = 800;
+const int height = 600;
 
 glm::vec3 light_dir(1, 1, 1);
 glm::vec3       eye(1, 1, 2);
@@ -24,7 +24,43 @@ glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
 
 Pipeline* p = Pipeline::getInstance();
 
+void runSDL(unsigned char * colorbuffer) {
+	SDL_Window *window = nullptr;
+	SDL_Renderer *render = nullptr;
+	SDL_Surface * surface = nullptr;
+	SDL_Event event;
 
+	if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
+		std::cout << SDL_GetError() << std::endl;
+		return;
+	}
+	window = SDL_CreateWindow("SoftRenderer", 100, 100,width, height, SDL_WINDOW_SHOWN);
+	if (window == nullptr) {
+		std::cout << SDL_GetError() << std::endl;
+		return;
+	}
+	render = SDL_CreateRenderer(window, -1, 0);
+	if (render == nullptr) {
+		std::cout << SDL_GetError() << std::endl;
+		return;
+	}
+	surface = SDL_GetWindowSurface(window);
+
+	SDL_LockSurface(surface);
+	Uint32* destPixels = (Uint32*)surface->pixels;
+	memcpy(destPixels, colorbuffer, sizeof(Uint32)*width*height);
+	SDL_UnlockSurface(surface);
+	SDL_UpdateWindowSurface(window);
+
+	while (true) {
+		SDL_PollEvent(&event);
+		if (event.type == SDL_QUIT)
+			break;
+		
+	}
+	SDL_DestroyRenderer(render);
+	SDL_Quit();
+}
 
 int main(int argc, char** argv) {
 
@@ -69,6 +105,8 @@ int main(int argc, char** argv) {
 		result_name = argv[2];
 	}
 	stbi_write_png(result_name.c_str(), width, height, 4, colorbuffer, 0);
+
+	runSDL(colorbuffer);
 
 	delete scene;
 	delete shader;
