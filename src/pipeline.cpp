@@ -118,6 +118,7 @@ void Pipeline::triangle(struct vert_out* attributes, ShaderBase *shader, unsigne
 	glm::mat3x4 clipPos_tri;  //三角形顶点裁剪空间坐标矩阵
 	glm::mat3x3 ndc_tri;   //三角形顶点NDC矩阵
 
+	//数组转化为矩阵
 	for (int i = 0; i < 3; i++) {
 		uv_tri[i] = attributes[i].uv;
 		worldPos_tri[i] = glm::vec4(attributes[i].worldPos, 1.0f);
@@ -139,7 +140,7 @@ void Pipeline::triangle(struct vert_out* attributes, ShaderBase *shader, unsigne
 		screenPos_tri[i] = tmp;
 	}
 
-
+	//边界框
 	glm::vec2 bboxmin(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
 	glm::vec2 bboxmax(-std::numeric_limits<float>::max(), -std::numeric_limits<float>::max());
 	glm::vec2 clamp(width_viewport - 1, height_viewport - 1);
@@ -210,6 +211,7 @@ void Pipeline::setPixel(unsigned char* colorbuffer, int x, int y, const glm::vec
 
 void Pipeline::Render(SRMesh* mesh, ShaderBase* shader, unsigned char *colorbuffer) {
 	std::cout << "\nStart rendering \"" << mesh->mName << "\"!\n";
+	//清空深度缓冲区和颜色缓冲区
 	clearZbuffer();
 	clearColorbuffer(colorbuffer,backgroundColor);
 	for (int i = 0; i < mesh->nFaces(); i++) {

@@ -4,11 +4,12 @@
 #include <glm/glm.hpp>
 #include <iostream>
 
+//模型网格类
 class SRMesh
 {
 public:
 	std::string mName;
-	std::vector<glm::ivec3> mFaces;
+	std::vector<glm::ivec3> mFaces;		
 	std::vector<glm::vec3> mVertices;
 	std::vector<glm::vec3> mUVs;
 	std::vector<glm::vec3> mNormals;
