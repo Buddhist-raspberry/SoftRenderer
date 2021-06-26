@@ -264,3 +264,14 @@ void Pipeline::MoveUp(float distance) {
 void Pipeline::MoveRight(float distance) {
 	this->SetView(eye + distance * right, center + distance * right, up);
 }
+
+
+void Pipeline::AddLight(Light* light) {
+	worldLights.push_back(light);
+}
+Light* Pipeline::GetLight(int index) {
+	if (index >= 0 && index < worldLights.size())
+		return worldLights.at(index);
+	else
+		return nullptr;
+}

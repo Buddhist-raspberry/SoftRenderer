@@ -62,8 +62,6 @@ public:
 	void FillColor(unsigned char *colorbuffer , const glm::vec4 & color) {
 		clearColorbuffer(colorbuffer, color);
 	}
-public:
-	AmbientLight* ambient;
 private:
 	static Pipeline* instance;
 	Pipeline();
@@ -92,7 +90,15 @@ private:
 	void clearZbuffer();  //清空深度缓冲区
 	void clearColorbuffer(unsigned char *colorbuffer,const glm::vec4& color); //清空颜色缓冲区
 	void setPixel(unsigned char* colorbuffer,int x,int y, const glm::vec4& color); 
-	
+
+
+public:
+	AmbientLight* ambient;
+private:
+	std::vector<Light*> worldLights;
+public:
+	void AddLight(Light* light);
+	Light* GetLight(int index);
 };
 
 

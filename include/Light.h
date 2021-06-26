@@ -9,14 +9,27 @@ protected:
 	float indensity;
 public:
 	Light(glm::vec3 _color, float _indensity) :color(_color), indensity(_indensity) {}
-	virtual glm::vec3 GetColorAtPos(const glm::vec3& pos) = 0;
+	virtual glm::vec3 GetColor(const glm::vec3& pos) = 0;
 };
 
 //环境光
 class AmbientLight:public Light {
 public:
 	AmbientLight(glm::vec3 _color, float _indensity):Light(_color,_indensity) {}
-	glm::vec3 GetColorAtPos(const glm::vec3& pos) override;
+	glm::vec3 GetColor(const glm::vec3& pos) override;
+};
+
+//平行光
+class DirectionalLight :public Light {
+private:
+	glm::vec3 direction;
+public:
+	DirectionalLight(glm::vec3 _color, float _indensity,glm::vec3 _direction) :Light(_color, _indensity) 
+	{
+		direction = _direction;
+	}
+	glm::vec3 GetColor(const glm::vec3& pos) override;
+	glm::vec3 GetDirection(const glm::vec3& pos);
 };
 
 

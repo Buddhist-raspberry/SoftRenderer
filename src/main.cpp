@@ -77,6 +77,7 @@ int main(int argc, char** argv) {
 	shader = s;
 
 	pipeline->ambient = new AmbientLight(glm::vec3(1.0f, 1.0f, 1.0f), 1.0f);
+	pipeline->AddLight(new DirectionalLight(glm::vec3(0,0, 1.0f), 4.0f, glm::vec3(0, -1, 0)));
 
 	pipeline->SetBGColor(VecColor::LightSlateBlue);
 	pipeline->Render(mesh, shader, colorbuffer);
