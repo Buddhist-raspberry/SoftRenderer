@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include "Shader.h"
 #include "SRMesh.h"
+#include "Light.h"
 
 class Pipeline //‰÷»æπ‹œﬂ¿‡
 {
@@ -61,7 +62,8 @@ public:
 	void FillColor(unsigned char *colorbuffer , const glm::vec4 & color) {
 		clearColorbuffer(colorbuffer, color);
 	}
-
+public:
+	AmbientLight* ambient;
 private:
 	static Pipeline* instance;
 	Pipeline();

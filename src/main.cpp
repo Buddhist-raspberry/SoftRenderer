@@ -76,6 +76,7 @@ int main(int argc, char** argv) {
 	s->normalTex = normalTex;
 	shader = s;
 
+	pipeline->ambient = new AmbientLight(glm::vec3(1.0f, 1.0f, 1.0f), 1.0f);
 
 	pipeline->SetBGColor(VecColor::LightSlateBlue);
 	pipeline->Render(mesh, shader, colorbuffer);
