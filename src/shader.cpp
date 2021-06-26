@@ -20,6 +20,26 @@ glm::vec4 ShaderUV::fragment(struct frag_in pixel) {
 	return color;
 }
 
+glm::vec4 ShaderPhong::fragment(struct frag_in pixel) {
+	glm::vec3& pos = pixel.worldPos;
+	glm::vec3& normal = pixel.worldNormal;
+
+	glm::vec3 ambient = Pipeline::getInstance()->ambient->GetColor();
+
+	Light* light = Pipeline::getInstance()->GetLight(0);
+	glm::vec3& lightDir = light->GetDirection(pos);
+	glm::vec3& lightColor = light->GetColor(pos);
+
+	glm::vec3 diffuse = lightColor * diffuseColor * glm::max(glm::dot(normal, lightDir), 0.0f);
+
+	glm::vec3& cameraPos = Pipeline::getInstance()->GetCameraPos();
+	glm::vec3 viewDir = glm::normalize( cameraPos - pos );
+	glm::vec3 reflectDir = lightDir - normal * glm::dot(normal, lightDir)*glm::vec3(2.0f);
+	glm::vec3 specular = lightColor * specularColor * glm::pow(glm::max(glm::dot(reflectDir, viewDir), 0.0f), gloss);
+
+	return glm::vec4(ambient+diffuse+ specular, 1.0f);
+}
+
 glm::vec4 ShaderTexture::fragment(struct frag_in pixel) {
 	glm::vec4 color = mainTex->sample(pixel.uv);
 	return color;

@@ -76,6 +76,15 @@ public:
 	glm::vec4 fragment(struct frag_in pixel) override;
 };
 
+//Phong光照模型着色器
+class ShaderPhong :public ShaderBase {
+public:
+	glm::vec3 diffuseColor;
+	glm::vec3 specularColor;
+	float gloss;
+	glm::vec4 fragment(struct frag_in pixel) override;
+};
+
 //基本纹理着色器
 class ShaderTexture:public ShaderBase {
 public:

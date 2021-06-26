@@ -10,6 +10,7 @@ protected:
 public:
 	Light(glm::vec3 _color, float _indensity) :color(_color), indensity(_indensity) {}
 	virtual glm::vec3 GetColor(const glm::vec3& pos) = 0;
+	virtual glm::vec3 GetDirection(const glm::vec3& pos) { return glm::vec3(0); }
 };
 
 //环境光
@@ -17,6 +18,7 @@ class AmbientLight:public Light {
 public:
 	AmbientLight(glm::vec3 _color, float _indensity):Light(_color,_indensity) {}
 	glm::vec3 GetColor(const glm::vec3& pos) override;
+	glm::vec3 GetColor();
 };
 
 //平行光
@@ -29,7 +31,7 @@ public:
 		direction = _direction;
 	}
 	glm::vec3 GetColor(const glm::vec3& pos) override;
-	glm::vec3 GetDirection(const glm::vec3& pos);
+	glm::vec3 GetDirection(const glm::vec3& pos) override;
 };
 
 

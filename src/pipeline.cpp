@@ -179,6 +179,7 @@ void Pipeline::triangle(struct vert_out* attributes, ShaderBase *shader, unsigne
 
 			//Æ¬Ôª×ÅÉ«
 			glm::vec4 color_frag = shader->fragment(attri_frag);
+			color_frag =  glm::clamp(color_frag, glm::vec4(0) , glm::vec4(1.0f) );
 			for (int i = 0; i < 4; i++) {
 				//colorbuffer[(P.x + P.y*width_viewport - 1) * 4 + i] = (unsigned char)(color_frag[i] * 255.0f);
 				setPixel(colorbuffer, P.x, P.y, color_frag);
@@ -187,6 +188,8 @@ void Pipeline::triangle(struct vert_out* attributes, ShaderBase *shader, unsigne
 		}
 	}
 }
+
+
 
 void Pipeline::clearZbuffer() {
 	for (int i = width_viewport * height_viewport; i--; zbuffer[i] = -std::numeric_limits<float>::max());
@@ -274,4 +277,8 @@ Light* Pipeline::GetLight(int index) {
 		return worldLights.at(index);
 	else
 		return nullptr;
+}
+
+glm::vec3 Pipeline::GetCameraPos() {
+	return eye;
 }

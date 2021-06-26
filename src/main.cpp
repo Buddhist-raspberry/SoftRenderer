@@ -41,6 +41,7 @@ int main(int argc, char** argv) {
 
 	//char* model_name = argv[1];
 	char* model_name = "../obj/african_head/african_head.obj";
+	//char* model_name = "../obj/cube/cube.obj";
 	char* main_texture_name = "../obj/african_head/african_head_diffuse.tga";
 	char* normal_texture_name = "../obj/african_head/african_head_nm_tangent.tga";
 	SRMesh * mesh;
@@ -67,17 +68,23 @@ int main(int argc, char** argv) {
 
 
 	ShaderBase* shader;
-	ShaderBumpedNormal * s= new ShaderBumpedNormal();
-	Texture2D* mainTex = new Texture2D();
-	mainTex->loadTexture(main_texture_name);
-	s->mainTex = mainTex;
-	Texture2D* normalTex = new Texture2D();
-	normalTex->loadTexture(normal_texture_name);
-	s->normalTex = normalTex;
+	//ShaderBumpedNormal * s= new ShaderBumpedNormal();
+	//Texture2D* mainTex = new Texture2D();
+	//mainTex->loadTexture(main_texture_name);
+	//s->mainTex = mainTex;
+	//Texture2D* normalTex = new Texture2D();
+	//normalTex->loadTexture(normal_texture_name);
+	//s->normalTex = normalTex;
+	//shader = s;
+
+	ShaderPhong * s = new ShaderPhong();
+	s->diffuseColor = VecColor::White;
+	s->specularColor = VecColor::White;
+	s->gloss = 5.0f;
 	shader = s;
 
-	pipeline->ambient = new AmbientLight(glm::vec3(1.0f, 1.0f, 1.0f), 1.0f);
-	pipeline->AddLight(new DirectionalLight(glm::vec3(0,0, 1.0f), 4.0f, glm::vec3(0, -1, 0)));
+	pipeline->ambient = new AmbientLight(VecColor::White, 0.3f);
+	pipeline->AddLight(new DirectionalLight(VecColor::White, 0.5f, glm::vec3(1, 1, 1)));
 
 	pipeline->SetBGColor(VecColor::LightSlateBlue);
 	pipeline->Render(mesh, shader, colorbuffer);

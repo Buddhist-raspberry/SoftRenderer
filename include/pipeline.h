@@ -99,6 +99,7 @@ private:
 public:
 	void AddLight(Light* light);
 	Light* GetLight(int index);
+	glm::vec3 GetCameraPos();
 };
 
 
