@@ -8,11 +8,13 @@ struct vert_in {
 	glm::vec3 vert;		//顶点坐标
 	glm::vec2 uv;		//顶点UV
 	glm::vec3 normal;	//顶点法线
+	glm::vec3 tangent;  //顶点切线
 	vert_in() {}
-	vert_in(glm::vec3 _vert, glm::vec2 _uv, glm::vec3 _normal) {
+	vert_in(glm::vec3 _vert, glm::vec2 _uv, glm::vec3 _normal, glm::vec3 _tangent) {
 		vert = _vert;
 		uv = _uv;
 		normal = _normal;
+		tangent = _tangent;
 	}
 };
 
@@ -20,11 +22,13 @@ struct vert_in {
 struct vert_out {
 	glm::vec4 clipPos;	//裁剪空间坐标
 	glm::vec3 worldNormal; //世界空间法线
+	glm::vec3 worldTangent; //世界空间切线
 	glm::vec3 worldPos;		//世界空间坐标
 	glm::vec2 uv;
 	vert_out() {}
-	vert_out(glm::vec3 _worldNormal, glm::vec3 _worldPos, glm::vec2 _uv) {
+	vert_out(glm::vec3 _worldNormal, glm::vec3 _worldTangent , glm::vec3 _worldPos, glm::vec2 _uv) {
 		worldNormal = _worldNormal;
+		worldTangent = _worldTangent;
 		worldPos = _worldPos;
 		uv = _uv;
 	}
@@ -33,11 +37,13 @@ struct vert_out {
 //片元着色器的输入
 struct frag_in {
 	glm::vec3 worldNormal; //世界空间法线
+	glm::vec3 worldTangent; //世界空间切线
 	glm::vec3 worldPos;		//世界空间坐标
 	glm::vec2 uv;
 	frag_in() {}
-	frag_in(glm::vec3 _worldNormal, glm::vec3 _worldPos, glm::vec2 _uv) {
+	frag_in(glm::vec3 _worldNormal, glm::vec3 _worldTangent , glm::vec3 _worldPos, glm::vec2 _uv) {
 		worldNormal = _worldNormal;
+		worldNormal = _worldTangent;
 		worldPos = _worldPos;
 		uv = _uv;
 	}
@@ -71,9 +77,17 @@ public:
 };
 
 //基本纹理着色器
-class ShaderTexture :public ShaderBase {
+class ShaderTexture:public ShaderBase {
 public:
 	Texture2D* mainTex;
+	glm::vec4 fragment(struct frag_in pixel) override;
+};
+
+//纹理+法线着色器
+class ShaderBumpedNormal:public ShaderBase {
+public:
+	Texture2D* mainTex;
+	Texture2D* normalTex;
 	glm::vec4 fragment(struct frag_in pixel) override;
 };
 

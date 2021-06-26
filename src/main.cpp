@@ -41,6 +41,8 @@ int main(int argc, char** argv) {
 
 	//char* model_name = argv[1];
 	char* model_name = "../obj/african_head/african_head.obj";
+	char* main_texture_name = "../obj/african_head/african_head_diffuse.tga";
+	char* normal_texture_name = "../obj/african_head/african_head_nm_tangent.tga";
 	SRMesh * mesh;
 
 	/*¶ÁÈ¡Ä£ÐÍ*/
@@ -65,16 +67,15 @@ int main(int argc, char** argv) {
 
 
 	ShaderBase* shader;
-	if (argc >= 3) {
-		ShaderTexture* s= new ShaderTexture();
-		Texture2D* tex = new Texture2D();
-		tex->loadTexture(argv[2]);
-		s->mainTex = tex;
-		shader = s;
-	}
-	else {
-		shader = new ShaderUV();
-	}
+	ShaderBumpedNormal * s= new ShaderBumpedNormal();
+	Texture2D* mainTex = new Texture2D();
+	mainTex->loadTexture(main_texture_name);
+	s->mainTex = mainTex;
+	Texture2D* normalTex = new Texture2D();
+	normalTex->loadTexture(normal_texture_name);
+	s->normalTex = normalTex;
+	shader = s;
+
 
 	pipeline->SetBGColor(VecColor::LightSlateBlue);
 	pipeline->Render(mesh, shader, colorbuffer);

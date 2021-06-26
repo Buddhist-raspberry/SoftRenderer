@@ -114,6 +114,7 @@ void Pipeline::triangle(struct vert_out* attributes, ShaderBase *shader, unsigne
 
 	glm::mat3x2 uv_tri;   //三角形UV矩阵
 	glm::mat3x4 normal_tri;  //三角形顶点法线矩阵 
+	glm::mat3x4 tangent_tri;  //三角形顶点切线矩阵 
 	glm::mat3x4 worldPos_tri; //三角形顶点世界空间坐标矩阵
 	glm::mat3x4 clipPos_tri;  //三角形顶点裁剪空间坐标矩阵
 	glm::mat3x3 ndc_tri;   //三角形顶点NDC矩阵
@@ -123,6 +124,7 @@ void Pipeline::triangle(struct vert_out* attributes, ShaderBase *shader, unsigne
 		uv_tri[i] = attributes[i].uv;
 		worldPos_tri[i] = glm::vec4(attributes[i].worldPos, 1.0f);
 		normal_tri[i] = glm::vec4(attributes[i].worldNormal,0.f);
+		tangent_tri[i] = glm::vec4(attributes[i].worldTangent, 0.f);
 		glm::vec4 tmp = attributes[i].clipPos;
 		clipPos_tri[i] = tmp;
 		ndc_tri[i] = tmp / tmp[3]; //齐次除法
@@ -171,6 +173,7 @@ void Pipeline::triangle(struct vert_out* attributes, ShaderBase *shader, unsigne
 			{
 				attri_frag.uv = uv_tri*bc_clip;
 				attri_frag.worldNormal = normal_tri * bc_clip;
+				attri_frag.worldTangent = tangent_tri * bc_clip;
 				attri_frag.worldPos = worldPos_tri * bc_clip;
 			}
 
@@ -217,7 +220,7 @@ void Pipeline::Render(SRMesh* mesh, ShaderBase* shader, unsigned char *colorbuff
 	for (int i = 0; i < mesh->nFaces(); i++) {
 		struct vert_out attributes[3];
 		for (int j = 0; j < 3; j++) {
-			struct vert_in v(mesh->GetVert(i,j),mesh->GetUV(i,j),mesh->GetNormal(i,j));
+			struct vert_in v(mesh->GetVert(i,j),mesh->GetUV(i,j),mesh->GetNormal(i,j), mesh->GetTangent(i, j));
 			attributes[j] = shader->vertex(v);
 		}
 		triangle(attributes,shader, colorbuffer, zbuffer);

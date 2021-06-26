@@ -7,6 +7,7 @@ struct vert_out ShaderBase::vertex(struct vert_in vert) {
 	o.clipPos = Pipeline::getInstance()->ObjectToClipPos(vert.vert);
 	o.worldPos = Pipeline::getInstance()->ObjectToWorldPos(vert.vert);
 	o.worldNormal = Pipeline::getInstance()->ObjectToWorldDir(vert.normal);
+	o.worldTangent = Pipeline::getInstance()->ObjectToWorldDir(vert.tangent);
 	o.uv = vert.uv;
 	return o;
 }
@@ -20,6 +21,11 @@ glm::vec4 ShaderUV::fragment(struct frag_in pixel) {
 }
 
 glm::vec4 ShaderTexture::fragment(struct frag_in pixel) {
+	glm::vec4 color = mainTex->sample(pixel.uv);
+	return color;
+}
+
+glm::vec4 ShaderBumpedNormal::fragment(struct frag_in pixel) {
 	glm::vec4 color = mainTex->sample(pixel.uv);
 	return color;
 }
