@@ -28,8 +28,11 @@ file(GLOB_RECURSE SRCS ./src/*.cpp)
 file(GLOB_RECURSE HEADERS include/*.h)
 
 
-# Create the executable
-add_executable(${PROJECT_NAME} ${SRCS} ${HEADERS})
+# # Create the executable
+# add_executable(${PROJECT_NAME} ${SRCS} ${HEADERS})
+
+add_library(${PROJECT_NAME} ${SRCS} ${HEADERS})
+add_library(SoftRenderer::renderer ALIAS ${PROJECT_NAME})
 
 # link the target with the SDL2
 target_link_libraries( ${PROJECT_NAME} 
@@ -58,5 +61,7 @@ ENDIF()
 
 
 
-
-
+# Add sub directories
+add_subdirectory(examples/01_PureColor)
+add_subdirectory(examples/02_UV)
+add_subdirectory(examples/03_Phong) 

@@ -29,19 +29,14 @@ SRApp* app;
 
 int main(int argc, char** argv) {
 
-	//if (2 > argc) {
-	//	std::cerr << "Usage: " << argv[0] << "obj/model.obj" << std::endl;
-	//	return 1;
-	//}
+
 
 	pipeline->SetModel(modelMatrix);
 	pipeline->SetView(eye, center, up);
 	pipeline->SetProjection(60.0f, width / height, 0.1f, 10.0f);
 	pipeline->SetViewport(0, 0, width, height);
 
-	//char* model_name = argv[1];
 	char* model_name = "../obj/african_head/african_head.obj";
-	//char* model_name = "../obj/cube/cube.obj";
 	char* main_texture_name = "../obj/african_head/african_head_diffuse.tga";
 	char* normal_texture_name = "../obj/african_head/african_head_nm_tangent.tga";
 	SRMesh * mesh;
@@ -68,14 +63,7 @@ int main(int argc, char** argv) {
 
 
 	ShaderBase* shader;
-	//ShaderBumpedNormal * s= new ShaderBumpedNormal();
-	//Texture2D* mainTex = new Texture2D();
-	//mainTex->loadTexture(main_texture_name);
-	//s->mainTex = mainTex;
-	//Texture2D* normalTex = new Texture2D();
-	//normalTex->loadTexture(normal_texture_name);
-	//s->normalTex = normalTex;
-	//shader = s;
+
 
 	ShaderPhong * s = new ShaderPhong();
 	s->diffuseColor = VecColor::White;
@@ -90,13 +78,13 @@ int main(int argc, char** argv) {
 	pipeline->Render(mesh, shader, colorbuffer);
 
 	/*保存为图片*/
-	std::string result_name = "result.png";
+	std::string result_name = "03_Phong.png";
 	stbi_write_png(result_name.c_str(), width, height, 4, colorbuffer, 0);
 
 
 	/*显示到窗口程序*/
 	app = new SRApp();
-	app->Init("SoftRenderer", width, height);
+	app->Init("03_Phong", width, height);
 	app->SetMoveSpeed(MoveSpeed);
 	app->Run(pipeline, mesh, shader, colorbuffer);
 	app->Quit();

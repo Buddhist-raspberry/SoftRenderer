@@ -89,6 +89,9 @@ public:
 class ShaderTexture:public ShaderBase {
 public:
 	Texture2D* mainTex;
+	glm::vec3 mainColor;
+	glm::vec3 specularColor;
+	float gloss;
 	glm::vec4 fragment(struct frag_in pixel) override;
 };
 
