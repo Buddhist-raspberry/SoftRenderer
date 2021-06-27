@@ -69,3 +69,5 @@ add_subdirectory(examples/04_Texture)
 add_subdirectory(examples/05_BumpedNormal) 
 add_subdirectory(examples/06_ShadowMap) 
 add_subdirectory(examples/08_PointLight) 
+add_subdirectory(examples/09_SpotLight) 
+
