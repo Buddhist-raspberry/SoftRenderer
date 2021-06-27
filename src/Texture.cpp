@@ -3,6 +3,7 @@
 
 #include <stb_image/stb_image.h>
 #include <string.h>
+#include <iostream>
 
 void Texture2D::loadTexture(const char* filename) {
 	int n;
@@ -21,6 +22,7 @@ void Texture2D::loadTexture(const char* filename) {
 		}
 	}
 	stbi_image_free(tmp);
+	std::cout << "Load Texture From \"" << filename << "\" Successfully!\n";
 }
 
 glm::vec4 Texture2D::sample(float u, float v){

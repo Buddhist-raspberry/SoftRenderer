@@ -100,7 +100,12 @@ class ShaderBumpedNormal:public ShaderBase {
 public:
 	Texture2D* mainTex;
 	Texture2D* normalTex;
+	glm::vec3 mainColor;
+	glm::vec3 specularColor;
+	float gloss;
 	glm::vec4 fragment(struct frag_in pixel) override;
+protected:
+	glm::vec3 calcBumpedNormal(glm::vec3& normal,glm::vec3& tangent,glm::vec3& sample);
 };
 
 #endif /*__SHADER_H__*/

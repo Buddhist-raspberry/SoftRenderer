@@ -63,6 +63,36 @@ glm::vec4 ShaderTexture::fragment(struct frag_in pixel) {
 }
 
 glm::vec4 ShaderBumpedNormal::fragment(struct frag_in pixel) {
-	glm::vec4 color = mainTex->sample(pixel.uv);
-	return color;
+	glm::vec3& pos = pixel.worldPos;
+	glm::vec3& normalSample = glm::vec3(normalTex->sample(pixel.uv.x, pixel.uv.y));
+	glm::vec3& normal = calcBumpedNormal(pixel.worldNormal, pixel.worldTangent, normalSample);
+
+
+	glm::vec3 ambient = Pipeline::getInstance()->ambient->GetColor();
+
+	Light* light = Pipeline::getInstance()->GetLight(0);
+	glm::vec3& lightDir = glm::normalize(light->GetDirection(pos));
+	glm::vec3& lightColor = light->GetColor(pos);
+		
+	glm::vec3 albedo = glm::vec3(mainTex->sample(pixel.uv))*mainColor;
+	glm::vec3 diffuse = lightColor * albedo * glm::max(glm::dot(normal, lightDir), 0.0f);
+
+	glm::vec3& cameraPos = Pipeline::getInstance()->GetCameraPos();
+	glm::vec3 viewDir = glm::normalize(cameraPos - pos);
+	glm::vec3 reflectDir = glm::normalize(lightDir - normal * glm::dot(normal, lightDir)*glm::vec3(2.0f));
+	glm::vec3 specular = lightColor * specularColor * glm::pow(glm::max(glm::dot(reflectDir, viewDir), 0.0f), gloss);
+	specular = glm::clamp(specular, glm::vec3(0), glm::vec3(1.0f));
+
+	return glm::vec4(ambient + diffuse + specular, 1.0f);
+}
+
+glm::vec3 ShaderBumpedNormal::calcBumpedNormal(glm::vec3& normal, glm::vec3& tangent, glm::vec3& sample) {
+	glm::vec3 tangent_new = glm::normalize(tangent - glm::dot(tangent, normal)*normal);
+	glm::vec3 bitangent_new = glm::cross(tangent_new, normal);
+	glm::vec3 bumpMapNormal = 2.0f * sample - glm::vec3(1.0f, 1.0f, 1.0f);
+	glm::mat3 TBN = glm::mat3(tangent_new, bitangent_new, normal);
+
+	glm::vec3 worldNormal = glm::normalize(TBN * bumpMapNormal);
+
+	return worldNormal;
 }
