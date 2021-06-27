@@ -1,12 +1,17 @@
 #ifndef __SR_MESH_H__
 #define __SR_MESH_H__
-#include <vector>
 #include <glm/glm.hpp>
 #include <iostream>
+#include <vector>
+
+#include "Shader.h"
 
 //模型网格类
 class SRMesh
 {
+public:
+	ShaderBase* mShader;
+	glm::mat4 modelMatrix = glm::mat4(1.0f);
 public:
 	std::string mName;
 	std::vector<glm::ivec3> mFaces;		

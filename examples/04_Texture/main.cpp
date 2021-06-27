@@ -62,23 +62,22 @@ int main(int argc, char** argv) {
 	unsigned char * colorbuffer = new unsigned char[4 * width*height];
 
 
-	ShaderBase* shader;
 
-
-	ShaderTexture * s = new ShaderTexture();
-	s->mainColor = VecColor::White;
-	s->specularColor = VecColor::White;
-	s->gloss = 2.0f;
+	ShaderTexture * shader = new ShaderTexture();
+	shader->mainColor = VecColor::White;
+	shader->specularColor = VecColor::White;
+	shader->gloss = 2.0f;
 	Texture2D* texture = new Texture2D();
 	texture->loadTexture(main_texture_name);
-	s->mainTex = texture;
-	shader = s;
+	shader->mainTex = texture;
+
+	mesh->mShader = shader;
 
 	pipeline->ambient = new AmbientLight(VecColor::White, 0.2f);
 	pipeline->AddLight(new DirectionalLight(VecColor::White, 0.5f, glm::vec3(1, 1, 1)));
 
 	pipeline->SetBGColor(VecColor::LightSlateBlue);
-	pipeline->Render(mesh, shader, colorbuffer);
+	pipeline->Render(mesh,colorbuffer);
 
 	/*±£´æÎªÍ¼Æ¬*/
 	std::string result_name = "04_Texture.png";
@@ -89,7 +88,7 @@ int main(int argc, char** argv) {
 	app = new SRApp();
 	app->Init("04_Texture", width, height);
 	app->SetMoveSpeed(MoveSpeed);
-	app->Run(pipeline, mesh, shader, colorbuffer);
+	app->Run(pipeline, mesh, colorbuffer);
 	app->Quit();
 
 	delete app;

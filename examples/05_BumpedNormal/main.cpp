@@ -62,24 +62,23 @@ int main(int argc, char** argv) {
 	unsigned char * colorbuffer = new unsigned char[4 * width*height];
 
 
-	ShaderBase* shader;
 
 
-	ShaderBumpedNormal * s = new ShaderBumpedNormal();
-	s->mainColor = VecColor::White;
-	s->specularColor = VecColor::White;
-	s->gloss = 2.0f;
-	s->mainTex = new Texture2D();
-	s->mainTex->loadTexture(main_texture_name);
-	s->normalTex = new Texture2D();
-	s->normalTex->loadTexture(normal_texture_name);
-	shader = s;
+	ShaderBumpedNormal * shader = new ShaderBumpedNormal();
+	shader->mainColor = VecColor::White;
+	shader->specularColor = VecColor::White;
+	shader->gloss = 2.0f;
+	shader->mainTex = new Texture2D();
+	shader->mainTex->loadTexture(main_texture_name);
+	shader->normalTex = new Texture2D();
+	shader->normalTex->loadTexture(normal_texture_name);
+	mesh->mShader = shader;
 
 	pipeline->ambient = new AmbientLight(VecColor::White, 0.2f);
 	pipeline->AddLight(new DirectionalLight(VecColor::White, 0.5f, glm::vec3(1, 1, 1)));
 
 	pipeline->SetBGColor(VecColor::LightSlateBlue);
-	pipeline->Render(mesh, shader, colorbuffer);
+	pipeline->Render(mesh,colorbuffer);
 
 	/*±£´æÎªÍ¼Æ¬*/
 	std::string result_name = "05_BumpedNormal.png";
@@ -90,7 +89,7 @@ int main(int argc, char** argv) {
 	app = new SRApp();
 	app->Init("05_BumpedNormal", width, height);
 	app->SetMoveSpeed(MoveSpeed);
-	app->Run(pipeline, mesh, shader, colorbuffer);
+	app->Run(pipeline, mesh, colorbuffer);
 	app->Quit();
 
 	delete app;

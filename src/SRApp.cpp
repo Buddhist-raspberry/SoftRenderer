@@ -46,7 +46,7 @@ void SRApp::Quit() {
 }
 
 
-void SRApp::Run(Pipeline* pipeline , SRMesh* mesh, ShaderBase* shader, unsigned char * colorbuffer) {
+void SRApp::Run(Pipeline* pipeline , std::vector<SRMesh*> meshs, unsigned char * colorbuffer) {
 
 	Display(colorbuffer);
 
@@ -110,9 +110,15 @@ void SRApp::Run(Pipeline* pipeline , SRMesh* mesh, ShaderBase* shader, unsigned 
 		}
 		if (quit)	break;
 		if (update) {
-			pipeline->Render(mesh, shader, colorbuffer);
+			pipeline->Render(meshs, colorbuffer);
 			Display(colorbuffer);
 		}
 
 	}
+}
+
+void SRApp::Run(Pipeline* pipeline, SRMesh* mesh, unsigned char * colorbuffer) {
+	std::vector<SRMesh*> meshs;
+	meshs.push_back(mesh);
+	Run(pipeline, meshs, colorbuffer);
 }

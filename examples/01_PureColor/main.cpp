@@ -60,14 +60,13 @@ int main(int argc, char** argv) {
 	unsigned char * colorbuffer = new unsigned char[4 * width*height];
 
 
-	ShaderBase* shader;
-	ShaderPureColor* s = new ShaderPureColor();
-	s->color = VecColor::LightSkyBlue;
-	shader = s;
+	ShaderPureColor* shader = new ShaderPureColor();
+	shader->color = VecColor::LightSkyBlue;
+	mesh->mShader = shader;
 
 
 	pipeline->SetBGColor(VecColor::LightSlateBlue);
-	pipeline->Render(mesh, shader, colorbuffer);
+	pipeline->Render(mesh,  colorbuffer);
 
 
 	/*±£´æÎªÍ¼Æ¬*/
@@ -79,7 +78,7 @@ int main(int argc, char** argv) {
 	app = new SRApp();
 	app->Init("01_PureColor", width, height);
 	app->SetMoveSpeed(MoveSpeed);
-	app->Run(pipeline, mesh, shader, colorbuffer);
+	app->Run(pipeline, mesh, colorbuffer);
 	app->Quit();
 
 	delete app;

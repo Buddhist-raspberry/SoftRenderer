@@ -49,7 +49,8 @@ public:  //顶点或向量变换相关函数
 	glm::vec4 ObjectToWorldDir(const glm::vec4& dir); 
 
 public: 
-	void Render(SRMesh* mesh, ShaderBase* shader, unsigned char *colorbuffer); //渲染一个模型到图片
+	void Render(SRMesh* mesh, unsigned char *colorbuffer); //渲染一个模型
+	void Render(std::vector<SRMesh*> meshs, unsigned char *colorbuffer); //渲染多个模型
 	void MoveForward(float distance); /*前后移动*/
 	void MoveUp(float distance); /*上下移动*/
 	void MoveRight(float distance); /*左右移动*/

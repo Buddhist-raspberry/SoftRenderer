@@ -214,11 +214,12 @@ void Pipeline::setPixel(unsigned char* colorbuffer, int x, int y, const glm::vec
 	memcpy(colorbuffer + (4 * (x+width_viewport*y-1)), c, sizeof(unsigned char) * 4);
 }
 
-void Pipeline::Render(SRMesh* mesh, ShaderBase* shader, unsigned char *colorbuffer) {
+void Pipeline::Render(SRMesh* mesh, unsigned char *colorbuffer) {
 	std::cout << "\nStart rendering \"" << mesh->mName << "\"!\n";
 	//清空深度缓冲区和颜色缓冲区
 	clearZbuffer();
 	clearColorbuffer(colorbuffer,backgroundColor);
+	ShaderBase* shader = mesh->mShader;
 	for (int i = 0; i < mesh->nFaces(); i++) {
 		struct vert_out attributes[3];
 		for (int j = 0; j < 3; j++) {
@@ -229,6 +230,30 @@ void Pipeline::Render(SRMesh* mesh, ShaderBase* shader, unsigned char *colorbuff
 	}
 
 	std::cout << "Finish rendering \"" << mesh->mName << "\"!\n";
+}
+
+void Pipeline::Render(std::vector<SRMesh*> meshs, unsigned char *colorbuffer) {
+	//清空深度缓冲区和颜色缓冲区
+	clearZbuffer();
+	clearColorbuffer(colorbuffer, backgroundColor);
+
+	for (unsigned int i = 0; i < meshs.size(); i++) {
+		SRMesh* mesh = meshs.at(i);
+		SetModel(mesh->modelMatrix);
+		std::cout << "\nStart rendering \"" << mesh->mName << "\"!\n";
+		ShaderBase* shader = mesh->mShader;
+		for (int i = 0; i < mesh->nFaces(); i++) {
+			struct vert_out attributes[3];
+			for (int j = 0; j < 3; j++) {
+				struct vert_in v(mesh->GetVert(i, j), mesh->GetUV(i, j), mesh->GetNormal(i, j), mesh->GetTangent(i, j));
+				attributes[j] = shader->vertex(v);
+			}
+			triangle(attributes, shader, colorbuffer, zbuffer);
+		}
+		std::cout << "Finish rendering \"" << mesh->mName << "\"!\n";
+	}
+
+
 }
 
 glm::vec4 Pipeline::ObjectToClipPos(const glm::vec3& pos) {
@@ -257,14 +282,17 @@ glm::vec4 Pipeline::ObjectToWorldDir(const glm::vec4& dir) {
 
 void Pipeline::MoveForward(float distance) {
 	this->SetView(eye + distance * forward, center, up);
+	std::cout << "Camera: (" << eye.x << "," << eye.y << "," << eye.z << ")\n";
 }
 
 void Pipeline::MoveUp(float distance) {
 	this->SetView(eye + distance * up, center + distance * up, up);
+	std::cout << "Camera: (" << eye.x << "," << eye.y << "," << eye.z << ")\n";
 }
 
 void Pipeline::MoveRight(float distance) {
 	this->SetView(eye + distance * right, center + distance * right, up);
+	std::cout << "Camera: (" << eye.x << "," << eye.y << "," << eye.z << ")\n";
 }
 
 

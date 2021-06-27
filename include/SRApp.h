@@ -20,7 +20,8 @@ private:
 public:
 	void Init(const char* title, int width,int height, int x=100, int y=50);
 	void Display(unsigned char * colorbuffer);
-	void Run(Pipeline* pipeline , SRMesh* mesh, ShaderBase* shader, unsigned char * colorbuffer);
+	void Run(Pipeline* pipeline, SRMesh* mesh, unsigned char * colorbuffer);
+	void Run(Pipeline* pipeline ,std::vector<SRMesh*> meshs, unsigned char * colorbuffer);
 	void Quit();
 
 public:
