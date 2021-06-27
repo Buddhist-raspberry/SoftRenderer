@@ -221,6 +221,7 @@ void Pipeline::Render(SRMesh* mesh, unsigned char *colorbuffer) {
 	clearZbuffer();
 	clearColorbuffer(colorbuffer,backgroundColor);
 	ShaderBase* shader = mesh->mShader;
+	SetModel(mesh->modelMatrix);
 	for (int i = 0; i < mesh->nFaces(); i++) {
 		struct vert_out attributes[3];
 		for (int j = 0; j < 3; j++) {

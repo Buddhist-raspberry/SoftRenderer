@@ -34,5 +34,24 @@ public:
 	glm::vec3 GetDirection(const glm::vec3& pos) override;
 };
 
+class PointLight :public Light {
+private:
+	glm::vec3 position;
+	float constant;
+	float linear;
+	float exp;
+public:
+	PointLight(glm::vec3 _color, float _indensity, glm::vec3 _position,
+		float _constant,float _linear,float _exp) 
+		:Light(_color, _indensity) {
+		position = _position;
+		constant = _constant;
+		linear = _linear;
+		exp = _exp;
+	}
+	glm::vec3 GetColor(const glm::vec3& pos) override;
+	glm::vec3 GetDirection(const glm::vec3& pos) override;
+};
+
 
 #endif // !__LIGHT_H__

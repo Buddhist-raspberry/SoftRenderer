@@ -15,6 +15,8 @@ public:
 public:
 	void SetShader(ShaderBase* shader);
 public:
+	SRMesh() {}
+	SRMesh(SRMesh* mesh);
 	std::string mName;
 	std::vector<glm::ivec3> mFaces;		
 	std::vector<glm::vec3> mVertices;
