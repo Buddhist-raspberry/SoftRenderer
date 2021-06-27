@@ -25,6 +25,12 @@ public:
 	const glm::mat4& getViewport() {
 		return ViewportMatrix;
 	}
+	const glm::mat4& getMVP() {
+		return ProjectionMatrix * ViewMatrix*ModelMatrix;
+	}
+	const glm::mat4& getVP() {
+		return ProjectionMatrix * ViewMatrix;
+	}
 
 public:
 
@@ -101,6 +107,7 @@ public:
 	void AddLight(Light* light);
 	Light* GetLight(int index);
 	glm::vec3 GetCameraPos();
+	float GetDepth();
 };
 
 

@@ -29,48 +29,26 @@ SRMesh* GetHead() {
 	char* main_texture_name = "../../obj/african_head/african_head_diffuse.tga";
 	char* normal_texture_name = "../../obj/african_head/african_head_nm_tangent.tga";
 
-
-
 	SRScene* scene = new SRScene();
 	scene->ReadSceneFromFile(model_name);
 	SRMesh* head = scene->GetMesh(0);
-
-	ShaderBumpedNormal * shader = new ShaderBumpedNormal();
-	shader->mainColor = VecColor::White;
-	shader->specularColor = VecColor::White;
-	shader->gloss = 10.0f;
-	shader->mainTex = new Texture2D();
-	shader->mainTex->loadTexture(main_texture_name);
-	shader->normalTex = new Texture2D();
-	shader->normalTex->loadTexture(normal_texture_name);
-
-	head->mShader = shader;
-	//head->mShader = new ShaderUV();
 
 	delete scene;
 	return head;
 
 }
 
-
 SRMesh* GetCube() {
 	char* model_name = "../../obj/cube/cube.obj";
-
 
 	SRScene* scene = new SRScene();
 	scene->ReadSceneFromFile(model_name);
 	SRMesh* cube = scene->GetMesh(0);
-
-	ShaderPhong * shader = new ShaderPhong();
-	shader->diffuseColor = VecColor::White*0.2f;
-	shader->specularColor = VecColor::White;
-	shader->gloss = 5.0f;
-
-	cube->mShader = shader;
 	glm::mat4 modelMatrix = glm::mat4(1.0f);
-	modelMatrix = glm::scale(modelMatrix, glm::vec3(20.0f,0.2f,20.0f));
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(0, -5.0f,0));
+	modelMatrix = glm::scale(modelMatrix, glm::vec3(20.0f, 0.2f, 20.0f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(0, -8.0f, 0));
 	cube->modelMatrix = modelMatrix;
+
 	delete scene;
 	return cube;
 }
@@ -78,24 +56,53 @@ SRMesh* GetCube() {
 int main(int argc, char** argv) {
 
 	std::vector<SRMesh*> meshs;
-	meshs.push_back(GetCube());
+	//meshs.push_back(GetCube());
 	meshs.push_back(GetHead());
 
-	pipeline->SetView(eye, center, up);
-	pipeline->SetProjection(60.0f, width / height, 0.001f, 10.0f);
+	pipeline->SetProjection(60.0f, width / height, 0.01f, 10.0f);
 	pipeline->SetViewport(0, 0, width, height);
 
-
-	/*‰÷»æ*/
+	unsigned char * shadowMap = new unsigned char[4 * width*height];
 	unsigned char * colorbuffer = new unsigned char[4 * width*height];
 
 
+	pipeline->ambient = new AmbientLight(VecColor::White, 0);
+	pipeline->AddLight(new DirectionalLight(VecColor::White, 1.0f, glm::vec3(-1, 1, 0)));
+	pipeline->SetBGColor(VecColor::White);
 
-	pipeline->ambient = new AmbientLight(VecColor::White, 0.3f);
-	pipeline->AddLight(new DirectionalLight(VecColor::White, 1.0f, glm::vec3(1, 1, 1)));
+	//‰÷»æShadowMap
+	{
+		for (int i = 0; i < meshs.size(); i++) {
+			ShaderDepth* shader = new ShaderDepth();
+			meshs.at(i)->SetShader(shader);
+		}
 
+		glm::vec3 lightPos = pipeline->GetLight(0)->GetDirection(glm::vec3());
+
+		pipeline->SetView(lightPos*5.0f, center, up);
+
+		pipeline->Render(meshs, shadowMap);
+
+		std::string result_name = "06_ShadowMap_Depth.png";
+		stbi_write_png(result_name.c_str(), width, height, 4, shadowMap, 0);
+	}
+	glm::mat4 shadowVP = pipeline->getVP();
+	DepthMap* shadowMapTexture = new DepthMap(shadowMap, width, height);
+	{
+		for (int i = 0; i < meshs.size(); i++) {
+			ShaderPhongWithShadow* shader = new ShaderPhongWithShadow();
+			shader->diffuseColor = VecColor::White;
+			shader->specularColor = VecColor::White;
+			shader->gloss = 5.0f;
+			shader->shadowMap = shadowMapTexture;
+			shader->shadowVP = shadowVP;
+			meshs.at(i)->SetShader(shader);
+		}
+	}
+
+
+	pipeline->SetView(eye, center, up);
 	pipeline->SetBGColor(VecColor::LightSlateBlue);
-
 	pipeline->Render(meshs, colorbuffer);
 
 

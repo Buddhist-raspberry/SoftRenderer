@@ -175,6 +175,7 @@ void Pipeline::triangle(struct vert_out* attributes, ShaderBase *shader, unsigne
 				attri_frag.worldNormal = normal_tri * bc_clip;
 				attri_frag.worldTangent = tangent_tri * bc_clip;
 				attri_frag.worldPos = worldPos_tri * bc_clip;
+				attri_frag.clipPos = viewclipPos_tri * bc_clip;
 			}
 
 			//Æ¬Ôª×ÅÉ«
@@ -308,4 +309,8 @@ Light* Pipeline::GetLight(int index) {
 
 glm::vec3 Pipeline::GetCameraPos() {
 	return eye;
+}
+
+float Pipeline::GetDepth() {
+	return zFar - zNear;
 }

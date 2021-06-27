@@ -13,6 +13,7 @@ public:
 	glm::vec4 sample(const glm::vec2& uv);   /*纹理采样*/
 	glm::vec4 sample(float u,float v);
 };
+
 class CubemapTexture {
 private:
 	unsigned char* data[6];
@@ -29,4 +30,14 @@ public:
 	glm::vec4 sample3D(const glm::vec3& dir);
 };
 
+//深度图
+class DepthMap {
+private:
+	unsigned char* data;
+	int width;
+	int height;
+public:
+	DepthMap(unsigned char* _data, int _width, int _height) :data(_data), width(_width), height(_height) {}
+	glm::vec4 sample(glm::vec2& xy);
+};
 #endif //__TEXTURE_H__
