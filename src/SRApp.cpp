@@ -51,6 +51,7 @@ void SRApp::Run(Pipeline* pipeline , std::vector<SRMesh*> meshs, unsigned char *
 	Display(colorbuffer);
 
 	SDL_Event event;
+
 	while (true) {
 		bool quit = false;
 		bool update = false;
@@ -125,6 +126,49 @@ void SRApp::Run(Pipeline* pipeline , std::vector<SRMesh*> meshs, unsigned char *
 					std::cout << "Key 6 Pressed!\n";
 					update = true;
 					pipeline->RotateZ(rotateSpeed);
+					break;
+
+				case SDL_KeyCode::SDLK_z:
+					std::cout << "Key z Pressed!\n";
+					update = true;
+					for (size_t i = 0; i < meshs.size(); ++i) {
+						pipeline->ModelMoveX(modelMoveSpeed, meshs[i]);
+					}
+					break;
+				case SDL_KeyCode::SDLK_x:
+					std::cout << "Key x Pressed!\n";
+					update = true;
+					for (size_t i = 0; i < meshs.size(); ++i) {
+						pipeline->ModelMoveX(-modelMoveSpeed, meshs[i]);
+					}
+					break;
+				case SDL_KeyCode::SDLK_c:
+					std::cout << "Key c Pressed!\n";
+					update = true;
+					for (size_t i = 0; i < meshs.size(); ++i) {
+						pipeline->ModelMoveY(modelMoveSpeed, meshs[i]);
+					}
+					break;
+				case SDL_KeyCode::SDLK_v:
+					std::cout << "Key v Pressed!\n";
+					update = true;
+					for (size_t i = 0; i < meshs.size(); ++i) {
+						pipeline->ModelMoveY(-modelMoveSpeed, meshs[i]);
+					}
+					break;
+				case SDL_KeyCode::SDLK_b:
+					std::cout << "Key b Pressed!\n";
+					update = true;
+					for (size_t i = 0; i < meshs.size(); ++i) {
+						pipeline->ModelMoveZ(modelMoveSpeed, meshs[i]);
+					}
+					break;
+				case SDL_KeyCode::SDLK_n:
+					std::cout << "Key n Pressed!\n";
+					update = true;
+					for (size_t i = 0; i < meshs.size(); ++i) {
+						pipeline->ModelMoveZ(-modelMoveSpeed, meshs[i]);
+					}
 					break;
 
 				case SDL_KeyCode::SDLK_ESCAPE:

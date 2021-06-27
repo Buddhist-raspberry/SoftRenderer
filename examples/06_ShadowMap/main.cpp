@@ -20,6 +20,7 @@ glm::vec3        up(0, 1, 0);		/*摄像机向上方向*/
 
 const float MoveSpeed = 0.5f;
 const float RotateSpeed = 10.0f;
+const float ModelMoveSpeed = 0.5f;
 
 Pipeline* pipeline = Pipeline::getInstance();
 
@@ -111,6 +112,7 @@ int main(int argc, char** argv) {
 	app->Init("06_ShadowMap", width, height);
 	app->SetMoveSpeed(MoveSpeed);
 	app->SetRotateSpeed(RotateSpeed);
+	app->SetModelMoveSpeed(ModelMoveSpeed);
 	app->Run(pipeline, meshs,  colorbuffer);
 	app->Quit();
 

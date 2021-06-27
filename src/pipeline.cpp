@@ -300,7 +300,6 @@ void Pipeline::RotateX(float distance) {
 	eye = matrix * glm::vec4(eye, 1.0f);
 	this->SetView(eye, center, up);
 	std::cout << "Camera: (" << eye.x << "," << eye.y << "," << eye.z << ")\n";
-	std::cout << "matrix: " << matrix.length() << "\n";
 }
 
 void Pipeline::RotateY(float distance) {
@@ -308,7 +307,6 @@ void Pipeline::RotateY(float distance) {
 	eye = matrix * glm::vec4(eye, 1.0f);
 	this->SetView(eye, center , up);
 	std::cout << "Camera: (" << eye.x << "," << eye.y << "," << eye.z << ")\n";
-	std::cout << "matrix: " << matrix.length() << "\n";
 }
 
 void Pipeline::RotateZ(float distance) {
@@ -316,7 +314,18 @@ void Pipeline::RotateZ(float distance) {
 	eye = matrix * glm::vec4(eye, 1.0f);
 	this->SetView(eye, center, up);
 	std::cout << "Camera: (" << eye.x << "," << eye.y << "," << eye.z << ")\n";
-	std::cout << "matrix: " << matrix.length() << "\n";
+}
+
+void Pipeline::ModelMoveX(float distance, SRMesh* mesh) {
+	mesh->modelMatrix = glm::translate(ModelMatrix, glm::vec3(distance, 0, 0));
+}
+
+void Pipeline::ModelMoveY(float distance, SRMesh* mesh) {
+	ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0, distance, 0));
+}
+
+void Pipeline::ModelMoveZ(float distance, SRMesh* mesh) {
+	ModelMatrix  = glm::translate(ModelMatrix, glm::vec3(0, 0, distance));
 }
 
 void Pipeline::AddLight(Light* light) {
