@@ -60,6 +60,7 @@ private:
 	glm::vec3 direction;
 	float cutOff;
 	float outerCutOff;
+	float epsilon;
 public:
 	SpotLight(glm::vec3 _color, float _indensity, glm::vec3 _position, glm::vec3 _direction,
 		float _constant, float _linear, float _exp, float _cutOffAngle, float _outerCutOffAngle)
@@ -67,6 +68,7 @@ public:
 		direction = _direction;
 		cutOff = glm::cos(glm::radians(_cutOffAngle));
 		outerCutOff = glm::cos(glm::radians(_outerCutOffAngle));
+		epsilon = cutOff - outerCutOff;
 	}
 	glm::vec3 GetColor(const glm::vec3& pos) override;
 

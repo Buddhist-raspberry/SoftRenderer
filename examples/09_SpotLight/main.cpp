@@ -72,8 +72,8 @@ int main(int argc, char** argv) {
 
 
 	pipeline->ambient = new AmbientLight(VecColor::White, 0.1f);
-	pipeline->AddLight(new SpotLight(VecColor::LightSkyBlue, 10.0f, glm::vec3(0, 0.5f,0),
-		glm::vec3(0,-1.0f,0), 1.0f, 0.7f, 1.8f,30.0f,45.0f));
+	pipeline->AddLight(new SpotLight(VecColor::LightSkyBlue, 10.0f, glm::vec3(0, -0.5f,0),
+		glm::vec3(0,1.0f,0), 1.0f, 0.7f, 1.8f,30.0f,45.0f));
 
 	pipeline->SetBGColor(VecColor::Black);
 	pipeline->Render(meshs, colorbuffer);

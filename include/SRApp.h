@@ -16,9 +16,9 @@ private:
 	int width;
 	int height;
 private:
-	float moveSpeed;
-	float rotateSpeed;
-	float modelMoveSpeed;
+	float moveSpeed=2.0f;
+	float rotateSpeed=10.0f;
+	float modelMoveSpeed=2.0f;
 public:
 	void Init(const char* title, int width,int height, int x=100, int y=50);
 	void Display(unsigned char * colorbuffer);
