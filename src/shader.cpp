@@ -30,13 +30,12 @@ glm::vec4 ShaderPhong::fragment(struct frag_in pixel) {
 	glm::vec3& lightDir = glm::normalize(light->GetDirection(pos));
 	glm::vec3& lightColor = light->GetColor(pos);
 
-	glm::vec3 diffuse = lightColor * diffuseColor * glm::max(glm::dot(normal, lightDir), 0.0f);
+	glm::vec3 diffuse = lightColor * diffuseColor * glm::clamp(glm::dot(normal, lightDir), 0.0f,1.0f);
 
 	glm::vec3& cameraPos = Pipeline::getInstance()->GetCameraPos();
 	glm::vec3 viewDir = glm::normalize( cameraPos - pos );
-	glm::vec3 reflectDir = glm::normalize(lightDir - normal * glm::dot(normal, lightDir)*glm::vec3(2.0f));
-	glm::vec3 specular = lightColor * specularColor * glm::pow(glm::max(glm::dot(reflectDir, viewDir), 0.0f), gloss);
-
+	glm::vec3 reflectDir = glm::normalize( glm::reflect(-lightDir,normal) );
+	glm::vec3 specular = lightColor * specularColor * glm::pow(glm::clamp(glm::dot(reflectDir, viewDir), 0.0f,1.0f), gloss);
 	return glm::vec4(ambient+diffuse+ specular, 1.0f);
 }
 
@@ -51,13 +50,12 @@ glm::vec4 ShaderTexture::fragment(struct frag_in pixel) {
 	glm::vec3& lightColor = light->GetColor(pos);
 
 	glm::vec3 albedo = glm::vec3(mainTex->sample(pixel.uv))*mainColor;
-	glm::vec3 diffuse = lightColor * albedo * glm::max(glm::dot(normal, lightDir), 0.0f);
+	glm::vec3 diffuse = lightColor * albedo * glm::clamp(glm::dot(normal, lightDir), 0.0f, 1.0f);
 
 	glm::vec3& cameraPos = Pipeline::getInstance()->GetCameraPos();
 	glm::vec3 viewDir = glm::normalize(cameraPos - pos);
-	glm::vec3 reflectDir = glm::normalize(lightDir - normal * glm::dot(normal, lightDir)*glm::vec3(2.0f));
-	glm::vec3 specular = lightColor * specularColor * glm::pow(glm::max(glm::dot(reflectDir, viewDir), 0.0f), gloss);
-	specular = glm::clamp(specular, glm::vec3(0), glm::vec3(1.0f));
+	glm::vec3 reflectDir = glm::normalize(glm::reflect(-lightDir, normal));
+	glm::vec3 specular = lightColor * specularColor * glm::pow(glm::clamp(glm::dot(reflectDir, viewDir), 0.0f, 1.0f), gloss);
 
 	return glm::vec4(ambient + diffuse + specular, 1.0f);
 }
@@ -67,21 +65,19 @@ glm::vec4 ShaderBumpedNormal::fragment(struct frag_in pixel) {
 	glm::vec3& normalSample = glm::vec3(normalTex->sample(pixel.uv.x, pixel.uv.y));
 	glm::vec3& normal = calcBumpedNormal(pixel.worldNormal, pixel.worldTangent, normalSample);
 
-
 	glm::vec3 ambient = Pipeline::getInstance()->ambient->GetColor();
 
 	Light* light = Pipeline::getInstance()->GetLight(0);
 	glm::vec3& lightDir = glm::normalize(light->GetDirection(pos));
 	glm::vec3& lightColor = light->GetColor(pos);
-		
+
 	glm::vec3 albedo = glm::vec3(mainTex->sample(pixel.uv))*mainColor;
-	glm::vec3 diffuse = lightColor * albedo * glm::max(glm::dot(normal, lightDir), 0.0f);
+	glm::vec3 diffuse = lightColor * albedo * glm::clamp(glm::dot(normal, lightDir), 0.0f, 1.0f);
 
 	glm::vec3& cameraPos = Pipeline::getInstance()->GetCameraPos();
 	glm::vec3 viewDir = glm::normalize(cameraPos - pos);
-	glm::vec3 reflectDir = glm::normalize(lightDir - normal * glm::dot(normal, lightDir)*glm::vec3(2.0f));
-	glm::vec3 specular = lightColor * specularColor * glm::pow(glm::max(glm::dot(reflectDir, viewDir), 0.0f), gloss);
-	specular = glm::clamp(specular, glm::vec3(0), glm::vec3(1.0f));
+	glm::vec3 reflectDir = glm::normalize(glm::reflect(-lightDir, normal));
+	glm::vec3 specular = lightColor * specularColor * glm::pow(glm::clamp(glm::dot(reflectDir, viewDir), 0.0f, 1.0f), gloss);
 
 	return glm::vec4(ambient + diffuse + specular, 1.0f);
 }

@@ -68,8 +68,8 @@ int main(int argc, char** argv) {
 	shader->gloss = 5.0f;
 	mesh->mShader = shader;
 
-	pipeline->ambient = new AmbientLight(VecColor::White, 0.3f);
-	pipeline->AddLight(new DirectionalLight(VecColor::White, 0.5f, glm::vec3(1, 1, 1)));
+	pipeline->ambient = new AmbientLight(VecColor::White, 0.4f);
+	pipeline->AddLight(new DirectionalLight(VecColor::White, 0.5f, glm::vec3(0, 1, 0)));
 
 	pipeline->SetBGColor(VecColor::LightSlateBlue);
 	pipeline->Render(mesh, colorbuffer);

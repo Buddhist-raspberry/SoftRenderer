@@ -66,15 +66,15 @@ int main(int argc, char** argv) {
 	ShaderTexture * shader = new ShaderTexture();
 	shader->mainColor = VecColor::White;
 	shader->specularColor = VecColor::White;
-	shader->gloss = 2.0f;
+	shader->gloss = 10.0f;
 	Texture2D* texture = new Texture2D();
 	texture->loadTexture(main_texture_name);
 	shader->mainTex = texture;
 
 	mesh->mShader = shader;
 
-	pipeline->ambient = new AmbientLight(VecColor::White, 0.2f);
-	pipeline->AddLight(new DirectionalLight(VecColor::White, 0.5f, glm::vec3(1, 1, 1)));
+	pipeline->ambient = new AmbientLight(VecColor::White, 0.3f);
+	pipeline->AddLight(new DirectionalLight(VecColor::White, 1.0f, glm::vec3(1, 1,1)));
 
 	pipeline->SetBGColor(VecColor::LightSlateBlue);
 	pipeline->Render(mesh,colorbuffer);
