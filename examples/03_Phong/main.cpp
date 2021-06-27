@@ -36,9 +36,7 @@ int main(int argc, char** argv) {
 	pipeline->SetProjection(60.0f, width / height, 0.1f, 10.0f);
 	pipeline->SetViewport(0, 0, width, height);
 
-	char* model_name = "../obj/african_head/african_head.obj";
-	char* main_texture_name = "../obj/african_head/african_head_diffuse.tga";
-	char* normal_texture_name = "../obj/african_head/african_head_nm_tangent.tga";
+	char* model_name = "../../obj/african_head/african_head.obj";
 	SRMesh * mesh;
 
 	/*¶ÁÈ¡Ä£ÐÍ*/

@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
 	pipeline->SetProjection(60.0f, width / height, 0.1f, 10.0f);
 	pipeline->SetViewport(0, 0, width, height);
 
-	char* model_name = "../obj/african_head/african_head.obj";
+	char* model_name = "../../obj/african_head/african_head.obj";
 
 	SRMesh * mesh;
 

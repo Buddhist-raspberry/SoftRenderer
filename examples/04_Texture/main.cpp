@@ -30,13 +30,15 @@ SRApp* app;
 int main(int argc, char** argv) {
 
 
+
 	pipeline->SetModel(modelMatrix);
 	pipeline->SetView(eye, center, up);
 	pipeline->SetProjection(60.0f, width / height, 0.1f, 10.0f);
 	pipeline->SetViewport(0, 0, width, height);
 
 	char* model_name = "../../obj/african_head/african_head.obj";
-
+	char* main_texture_name = "../../obj/african_head/african_head_diffuse.tga";
+	char* normal_texture_name = "../../obj/african_head/african_head_nm_tangent.tga";
 	SRMesh * mesh;
 
 	/*读取模型*/
@@ -61,21 +63,31 @@ int main(int argc, char** argv) {
 
 
 	ShaderBase* shader;
-	ShaderUV* s = new ShaderUV();
+
+
+	ShaderTexture * s = new ShaderTexture();
+	s->mainColor = VecColor::White;
+	s->specularColor = VecColor::White;
+	s->gloss = 2.0f;
+	Texture2D* texture = new Texture2D();
+	texture->loadTexture(main_texture_name);
+	s->mainTex = texture;
 	shader = s;
 
+	pipeline->ambient = new AmbientLight(VecColor::White, 0.2f);
+	pipeline->AddLight(new DirectionalLight(VecColor::White, 0.5f, glm::vec3(1, 1, 1)));
 
 	pipeline->SetBGColor(VecColor::LightSlateBlue);
 	pipeline->Render(mesh, shader, colorbuffer);
 
-
 	/*保存为图片*/
-	std::string result_name = "02_UV.png";
+	std::string result_name = "04_Texture.png";
 	stbi_write_png(result_name.c_str(), width, height, 4, colorbuffer, 0);
+
 
 	/*显示到窗口程序*/
 	app = new SRApp();
-	app->Init("02_UV", width, height);
+	app->Init("04_Texture", width, height);
 	app->SetMoveSpeed(MoveSpeed);
 	app->Run(pipeline, mesh, shader, colorbuffer);
 	app->Quit();
