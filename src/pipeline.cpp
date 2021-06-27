@@ -321,11 +321,11 @@ void Pipeline::ModelMoveX(float distance, SRMesh* mesh) {
 }
 
 void Pipeline::ModelMoveY(float distance, SRMesh* mesh) {
-	ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0, distance, 0));
+	mesh->modelMatrix = glm::translate(ModelMatrix, glm::vec3(0, distance, 0));
 }
 
 void Pipeline::ModelMoveZ(float distance, SRMesh* mesh) {
-	ModelMatrix  = glm::translate(ModelMatrix, glm::vec3(0, 0, distance));
+	mesh->modelMatrix  = glm::translate(ModelMatrix, glm::vec3(0, 0, distance));
 }
 
 void Pipeline::AddLight(Light* light) {
