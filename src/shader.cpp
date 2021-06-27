@@ -172,3 +172,38 @@ glm::vec4 ShaderBumpedNormalWithShadow::fragment(struct frag_in pixel) {
 
 	return glm::vec4(ambient + (diffuse + specular)*shadow, 1.0f);
 }
+
+glm::vec4 ShaderPhongMulti::fragment(struct frag_in pixel) {
+	glm::vec3& pos = pixel.worldPos;
+	glm::vec3& normal = pixel.worldNormal;
+	glm::vec3& cameraPos = Pipeline::getInstance()->GetCameraPos();
+	glm::vec3 viewDir = glm::normalize(cameraPos - pos);
+
+	//环境光
+	glm::vec3 ambient = Pipeline::getInstance()->ambient->GetColor();
+	
+	unsigned int worldLightCount = Pipeline::getInstance()->GetLightCount();
+
+	glm::vec3 result = ambient;
+	for (unsigned int i = 0; i < maxLightCount&&i < worldLightCount; i++) {
+		result += calcLight(i, pos, normal, viewDir);
+	}
+
+	return glm::vec4(result, 1.0f);
+}
+
+glm::vec3  ShaderPhongMulti::calcLight(int lightIndex, glm::vec3& pos , glm::vec3& normal, glm::vec3& viewDir) {
+	Light* light = Pipeline::getInstance()->GetLight(lightIndex);
+	glm::vec3& lightDir = glm::normalize(light->GetDirection(pos));
+	glm::vec3& lightColor = light->GetColor(pos);
+
+	//漫反射
+	glm::vec3 diffuse = lightColor * diffuseColor * glm::clamp(glm::dot(normal, lightDir), 0.0f, 1.0f);
+
+	//镜面反射
+	glm::vec3 reflectDir = glm::normalize(glm::reflect(-lightDir, normal));
+	glm::vec3 specular = lightColor * specularColor * glm::pow(glm::clamp(glm::dot(reflectDir, viewDir), 0.0f, 1.0f), gloss);
+	
+	return diffuse + specular;
+
+}

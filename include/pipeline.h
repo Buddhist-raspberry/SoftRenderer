@@ -108,6 +108,7 @@ public:
 	Light* GetLight(int index);
 	glm::vec3 GetCameraPos();
 	float GetDepth();
+	unsigned int GetLightCount() { return worldLights.size(); }
 };
 
 

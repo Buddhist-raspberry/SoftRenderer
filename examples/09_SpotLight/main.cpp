@@ -79,13 +79,13 @@ int main(int argc, char** argv) {
 	pipeline->Render(meshs, colorbuffer);
 
 	/*保存为图片*/
-	std::string result_name = "08_PointLight.png";
+	std::string result_name = "09_SpotLight.png";
 	stbi_write_png(result_name.c_str(), width, height, 4, colorbuffer, 0);
 
 
 	/*显示到窗口程序*/
 	app = new SRApp();
-	app->Init("08_PoingLight", width, height);
+	app->Init("09_SpotLight", width, height);
 	app->SetMoveSpeed(MoveSpeed);
 	app->Run(pipeline, meshs, colorbuffer);
 	app->Quit();

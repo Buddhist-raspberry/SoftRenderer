@@ -25,12 +25,12 @@ glm::vec3 PointLight::GetColor(const glm::vec3& pos) {
 }
 
 glm::vec3 PointLight::GetDirection(const glm::vec3& pos) {
-	return position-pos;
+	return pos-position;
 }
 
 glm::vec3 SpotLight::GetColor(const glm::vec3& pos) {
-	glm::vec3 lightDir = glm::normalize(position - pos);
-	float theta = glm::dot(lightDir, glm::normalize(-direction));
+	glm::vec3 lightDir = glm::normalize(pos - position);
+	float theta = glm::dot(lightDir, glm::normalize(direction));
 	float epsilon = cutOff - outerCutOff;
 	float I = glm::clamp( (theta - outerCutOff) / epsilon, 0.0f, 1.0f);
 	glm::vec3 c = PointLight::GetColor(pos);

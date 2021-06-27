@@ -68,7 +68,7 @@ public:
 		cutOff = glm::cos(glm::radians(_cutOffAngle));
 		outerCutOff = glm::cos(glm::radians(_outerCutOffAngle));
 	}
-	glm::vec3 GetColor(const glm::vec3& pos);
+	glm::vec3 GetColor(const glm::vec3& pos) override;
 
 };
 

@@ -131,4 +131,16 @@ public:
 	glm::vec4 fragment(struct frag_in pixel) override;
 };
 
+//Phong多光源着色器
+class ShaderPhongMulti :public ShaderBase {
+public:
+	glm::vec3 diffuseColor;
+	glm::vec3 specularColor;
+	float gloss;
+	unsigned int maxLightCount=2;
+	glm::vec4 fragment(struct frag_in pixel) override;
+private:
+	glm::vec3 calcLight(int lightIndex, glm::vec3& pos, glm::vec3& normal, glm::vec3& viewDir);
+};
+
 #endif /*__SHADER_H__*/
