@@ -61,6 +61,14 @@ public:
 	void MoveUp(float distance); /*上下移动*/
 	void MoveRight(float distance); /*左右移动*/
 
+	void RotateX(float distance);/* 摄像机x轴旋转 */
+	void RotateY(float distance);/* 摄像机y轴旋转 */
+	void RotateZ(float distance);/* 摄像机z轴旋转 */
+
+	void ModelMoveX(float distance, SRMesh* mesh);/* 模型x轴旋转 */
+	void ModelMoveY(float distance, SRMesh* mesh);/* 模型y轴旋转 */
+	void ModelMoveZ(float distance, SRMesh* mesh);/* 模型z轴旋转 */
+
 public:
 	//设置背景颜色
 	void SetBGColor(glm::vec4 color) {
