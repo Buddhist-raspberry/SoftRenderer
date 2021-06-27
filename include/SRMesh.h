@@ -10,9 +10,13 @@
 class SRMesh
 {
 public:
-	ShaderBase* mShader;
+	ShaderBase* mShader=nullptr;
 	glm::mat4 modelMatrix = glm::mat4(1.0f);
 public:
+	void SetShader(ShaderBase* shader);
+public:
+	SRMesh() {}
+	SRMesh(SRMesh* mesh);
 	std::string mName;
 	std::vector<glm::ivec3> mFaces;		
 	std::vector<glm::vec3> mVertices;

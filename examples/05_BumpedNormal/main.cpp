@@ -67,15 +67,15 @@ int main(int argc, char** argv) {
 	ShaderBumpedNormal * shader = new ShaderBumpedNormal();
 	shader->mainColor = VecColor::White;
 	shader->specularColor = VecColor::White;
-	shader->gloss = 2.0f;
+	shader->gloss = 10.0f;
 	shader->mainTex = new Texture2D();
 	shader->mainTex->loadTexture(main_texture_name);
 	shader->normalTex = new Texture2D();
 	shader->normalTex->loadTexture(normal_texture_name);
 	mesh->mShader = shader;
 
-	pipeline->ambient = new AmbientLight(VecColor::White, 0.2f);
-	pipeline->AddLight(new DirectionalLight(VecColor::White, 0.5f, glm::vec3(1, 1, 1)));
+	pipeline->ambient = new AmbientLight(VecColor::White, 0.3f);
+	pipeline->AddLight(new DirectionalLight(VecColor::White, 1.0f, glm::vec3(1, 1, 1)));
 
 	pipeline->SetBGColor(VecColor::LightSlateBlue);
 	pipeline->Render(mesh,colorbuffer);

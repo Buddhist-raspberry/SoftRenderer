@@ -93,3 +93,8 @@ glm::vec4 CubemapTexture::sample3D(const glm::vec3& dir) {
 	//TODO: cube映射为球体->球体求交->采样
 	return glm::vec4(0);
 }
+
+glm::vec4 DepthMap::sample(glm::vec2& xy) {
+	int index = int(xy.y) + int(xy.x)*width;
+	return VecColor::color_256_to_vec(data + 4 *index);
+}

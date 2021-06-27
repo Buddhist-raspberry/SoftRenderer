@@ -175,6 +175,7 @@ void Pipeline::triangle(struct vert_out* attributes, ShaderBase *shader, unsigne
 				attri_frag.worldNormal = normal_tri * bc_clip;
 				attri_frag.worldTangent = tangent_tri * bc_clip;
 				attri_frag.worldPos = worldPos_tri * bc_clip;
+				attri_frag.clipPos = viewclipPos_tri * bc_clip;
 			}
 
 			//片元着色
@@ -220,6 +221,7 @@ void Pipeline::Render(SRMesh* mesh, unsigned char *colorbuffer) {
 	clearZbuffer();
 	clearColorbuffer(colorbuffer,backgroundColor);
 	ShaderBase* shader = mesh->mShader;
+	SetModel(mesh->modelMatrix);
 	for (int i = 0; i < mesh->nFaces(); i++) {
 		struct vert_out attributes[3];
 		for (int j = 0; j < 3; j++) {
@@ -281,6 +283,7 @@ glm::vec4 Pipeline::ObjectToWorldDir(const glm::vec4& dir) {
 }
 
 void Pipeline::MoveForward(float distance) {
+	//eye摄像机位置，center摄像机看向的地方，up摄像机向上的坐标轴
 	this->SetView(eye + distance * forward, center, up);
 	std::cout << "Camera: (" << eye.x << "," << eye.y << "," << eye.z << ")\n";
 }
@@ -294,7 +297,38 @@ void Pipeline::MoveRight(float distance) {
 	this->SetView(eye + distance * right, center + distance * right, up);
 	std::cout << "Camera: (" << eye.x << "," << eye.y << "," << eye.z << ")\n";
 }
+void Pipeline::RotateX(float distance) {
+	glm::mat4 matrix = glm::rotate(glm::mat4(1), glm::radians(distance), glm::vec3(1, 0, 0));
+	eye = matrix * glm::vec4(eye, 1.0f);
+	this->SetView(eye, center, up);
+	std::cout << "Camera: (" << eye.x << "," << eye.y << "," << eye.z << ")\n";
+}
 
+void Pipeline::RotateY(float distance) {
+	glm::mat4 matrix = glm::rotate(glm::mat4(1), glm::radians(distance), glm::vec3(0, 1, 0));
+	eye = matrix * glm::vec4(eye, 1.0f);
+	this->SetView(eye, center , up);
+	std::cout << "Camera: (" << eye.x << "," << eye.y << "," << eye.z << ")\n";
+}
+
+void Pipeline::RotateZ(float distance) {
+	glm::mat4 matrix = glm::rotate(glm::mat4(1), glm::radians(distance), glm::vec3(0, 0, 1));
+	eye = matrix * glm::vec4(eye, 1.0f);
+	this->SetView(eye, center, up);
+	std::cout << "Camera: (" << eye.x << "," << eye.y << "," << eye.z << ")\n";
+}
+
+void Pipeline::ModelMoveX(float distance, SRMesh* mesh) {
+	mesh->modelMatrix = glm::translate(ModelMatrix, glm::vec3(distance, 0, 0));
+}
+
+void Pipeline::ModelMoveY(float distance, SRMesh* mesh) {
+	mesh->modelMatrix = glm::translate(ModelMatrix, glm::vec3(0, distance, 0));
+}
+
+void Pipeline::ModelMoveZ(float distance, SRMesh* mesh) {
+	mesh->modelMatrix  = glm::translate(ModelMatrix, glm::vec3(0, 0, distance));
+}
 
 void Pipeline::AddLight(Light* light) {
 	worldLights.push_back(light);
@@ -308,4 +342,8 @@ Light* Pipeline::GetLight(int index) {
 
 glm::vec3 Pipeline::GetCameraPos() {
 	return eye;
+}
+
+float Pipeline::GetDepth() {
+	return zFar - zNear;
 }
