@@ -64,6 +64,7 @@ void SRApp::Run(Pipeline* pipeline , std::vector<SRMesh*> meshs, unsigned char *
 			switch (event.key.state) {
 			case SDL_PRESSED:
 				switch (event.key.keysym.sym) {
+					//ÒÆ¶¯
 				case SDL_KeyCode::SDLK_w:
 					std::cout << "Key W Pressed!\n";
 					update = true;
@@ -94,6 +95,38 @@ void SRApp::Run(Pipeline* pipeline , std::vector<SRMesh*> meshs, unsigned char *
 					update = true;
 					pipeline->MoveUp(-moveSpeed);
 					break;
+					//Ðý×ª
+				case SDL_KeyCode::SDLK_1:
+					std::cout << "Key 1 Pressed!\n";
+					update = true;
+					pipeline->RotateX(-rotateSpeed);
+					break;
+				case SDL_KeyCode::SDLK_2:
+					std::cout << "Key 2 Pressed!\n";
+					update = true;
+					pipeline->RotateX(rotateSpeed);
+					break;
+				case SDL_KeyCode::SDLK_3:
+					std::cout << "Key 3 Pressed!\n";
+					update = true;
+					pipeline->RotateY(-rotateSpeed);
+					break;
+				case SDL_KeyCode::SDLK_4:
+					std::cout << "Key 4 Pressed!\n";
+					update = true;
+					pipeline->RotateY(rotateSpeed);
+					break;
+				case SDL_KeyCode::SDLK_5:
+					std::cout << "Key 5 Pressed!\n";
+					update = true;
+					pipeline->RotateZ(-rotateSpeed);
+					break;
+				case SDL_KeyCode::SDLK_6:
+					std::cout << "Key 6 Pressed!\n";
+					update = true;
+					pipeline->RotateZ(rotateSpeed);
+					break;
+
 				case SDL_KeyCode::SDLK_ESCAPE:
 					quit = true;
 					break;

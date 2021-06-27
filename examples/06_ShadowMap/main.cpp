@@ -19,6 +19,7 @@ glm::vec3    center(0, 0, 0);		/*摄像机朝向中心点*/
 glm::vec3        up(0, 1, 0);		/*摄像机向上方向*/
 
 const float MoveSpeed = 0.5f;
+const float RotateSpeed = 10.0f;
 
 Pipeline* pipeline = Pipeline::getInstance();
 
@@ -109,6 +110,7 @@ int main(int argc, char** argv) {
 	app = new SRApp();
 	app->Init("06_ShadowMap", width, height);
 	app->SetMoveSpeed(MoveSpeed);
+	app->SetRotateSpeed(RotateSpeed);
 	app->Run(pipeline, meshs,  colorbuffer);
 	app->Quit();
 

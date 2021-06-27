@@ -55,6 +55,10 @@ public:
 	void MoveUp(float distance); /*上下移动*/
 	void MoveRight(float distance); /*左右移动*/
 
+	void RotateX(float distance);/* x轴旋转 */
+	void RotateY(float distance);/* y轴旋转 */
+	void RotateZ(float distance);/* z轴旋转 */
+
 public:
 	//设置背景颜色
 	void SetBGColor(glm::vec4 color) {
