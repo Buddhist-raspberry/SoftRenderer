@@ -12,7 +12,7 @@
 
 
 const int width = 800;
-const int height = 600;
+const int height = 800;
 
 glm::vec3       eye(1, 1, 2);       /*摄像机位置*/
 glm::vec3    center(0, 0, 0);		/*摄像机朝向中心点*/
@@ -36,19 +36,22 @@ int main(int argc, char** argv) {
 	pipeline->SetProjection(60.0f, width / height, 0.1f, 10.0f);
 	pipeline->SetViewport(0, 0, width, height);
 
-	char* model_name = "../../obj/african_head/african_head.obj";
-	SRMesh * mesh;
+	//char* model_name = "../../obj/african_head/african_head.obj";
+	char* model_name = "../../obj/Models/model1/model_normalized.obj";
+	
 
+	std::vector<SRMesh*>meshs;
 	/*读取模型*/
 	scene = new SRScene();
 	if (scene->ReadSceneFromFile(model_name)) {
-		mesh = scene->GetMesh(0);
-		if (mesh) {
-			std::cout << "Name: " << mesh->mName << std::endl;
-		}
-		else {
-			std::cerr << "No mesh found in file!\n" << std::endl;
-			return 1;
+		for (int i = 0; i < scene->numMeshes; i++) {
+			SRMesh * mesh = scene->GetMesh(i);
+			ShaderPhong * shader = new ShaderPhong();
+			shader->diffuseColor = VecColor::White;
+			shader->specularColor = VecColor::White;
+			shader->gloss = 5.0f;
+			mesh->mShader = shader;
+			meshs.push_back(mesh);
 		}
 	}
 	else {
@@ -62,20 +65,16 @@ int main(int argc, char** argv) {
 
 
 
-	ShaderPhong * shader = new ShaderPhong();
-	shader->diffuseColor = VecColor::White;
-	shader->specularColor = VecColor::White;
-	shader->gloss = 5.0f;
-	mesh->mShader = shader;
+
 
 	pipeline->ambient = new AmbientLight(VecColor::White, 0.4f);
 	pipeline->AddLight(new DirectionalLight(VecColor::White, 0.5f, glm::vec3(0, 1, 0)));
 
 	pipeline->SetBGColor(VecColor::LightSlateBlue);
-	pipeline->Render(mesh, colorbuffer);
+	pipeline->Render(meshs, colorbuffer);
 
 	/*保存为图片*/
-	std::string result_name = "03_Phong.png";
+	std::string result_name = "03_Phong_model1.png";
 	stbi_write_png(result_name.c_str(), width, height, 4, colorbuffer, 0);
 
 
@@ -83,12 +82,11 @@ int main(int argc, char** argv) {
 	app = new SRApp();
 	app->Init("03_Phong", width, height);
 	app->SetMoveSpeed(MoveSpeed);
-	app->Run(pipeline, mesh, colorbuffer);
+	app->Run(pipeline, meshs, colorbuffer);
 	app->Quit();
 
 	delete app;
 	delete scene;
-	delete shader;
 	stbi_image_free(colorbuffer);
 
 	return 0;

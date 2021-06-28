@@ -6,6 +6,8 @@
 #include <iostream>
 #include <algorithm>
 
+
+
 Pipeline* Pipeline::instance = nullptr;
 
 Pipeline::Pipeline() {
@@ -252,6 +254,10 @@ void Pipeline::Render(SRMesh* mesh, unsigned char *colorbuffer) {
 	}
 
 	std::cout << "Finish rendering \"" << mesh->mName << "\"!\n";
+	if (hasBloom) {
+		bloom(colorbuffer, bloom_indensity, bloom_indensity);
+	}
+
 }
 
 void Pipeline::Render(std::vector<SRMesh*> meshs, unsigned char *colorbuffer) {
@@ -274,7 +280,9 @@ void Pipeline::Render(std::vector<SRMesh*> meshs, unsigned char *colorbuffer) {
 		}
 		std::cout << "Finish rendering \"" << mesh->mName << "\"!\n";
 	}
-
+	if(hasBloom){
+		bloom(colorbuffer, bloom_indensity, bloom_threshold);
+	}
 
 }
 
@@ -366,4 +374,89 @@ glm::vec3 Pipeline::GetCameraPos() {
 
 float Pipeline::GetDepth() {
 	return zFar - zNear;
+}
+
+
+unsigned char* Pipeline::threshold(unsigned char cb[], float T)
+{
+	const float weight[3] = { 0.2126f, 0.7152f, 0.0722f };
+
+	const int size = 4 * width_viewport * height_viewport;
+	unsigned char* tb = new unsigned char[size]();
+	for (int i = 0; i < size; i += 4)
+	{
+		float r = (float)cb[i] * weight[0];
+		float g = (float)cb[i + 1] * weight[1];
+		float b = (float)cb[i + 2] * weight[2];
+		if (r + g + b > T)
+		{
+			tb[i] = cb[i];
+			tb[i + 1] = cb[i + 1];
+			tb[i + 2] = cb[i + 2];
+			tb[i + 3] = cb[i + 3];
+		}
+		else
+		{
+			/*printf("%f\n", r + b + g);*/
+		}
+	}
+	return tb;
+}
+
+#define min(x,y) (((x)<(y))?(x):(y))
+
+
+void Pipeline::bloom(unsigned char cb[], float indensity, float T )
+{
+	const float weight[5] = { 0.4026f, 0.2442f, 0.2442f,  0.0545f, 0.0545f };
+
+	int width = width_viewport, height = height_viewport;
+	unsigned char* tb = threshold(cb, T);
+	unsigned int size = 4 * width * height;
+	float* fcb = new float[size];
+	for (unsigned int i = 0; i < size; ++i)
+	{
+		fcb[i] = (float)cb[i];
+	}
+
+
+	for (int i = 0; i < height; ++i)
+	{
+		for (int j = 0; j < width; ++j)
+		{
+			const int lines_before = -1 * min(4, i);
+			const int lines_after = min(4, height - i - 1);
+			const int col_before = -1 * min(4, j);
+			const int col_after = min(4, width - j - 1);
+
+			float increment_r = 0.0f;
+			float increment_g = 0.0f;
+			float increment_b = 0.0f;
+
+			for (int k = lines_before; k <= lines_after; ++k)
+			{
+				for (int m = col_before; m <= col_after; ++m)
+				{
+					const int coordinate = ((i + k) * width + (j + m)) * 4;
+					if (tb[coordinate] > 0 || tb[coordinate + 1] > 0 || tb[coordinate + 2] > 0)
+					{
+						//printf("%d  %f  %f  %d  %d\n", tb[coordinate], (float)tb[coordinate] * weight[abs(k)] * weight[abs(m)], weight[abs(k)] * weight[abs(m)], k, m);
+						increment_r += (float)tb[coordinate] * weight[abs(k)] * weight[abs(m)];
+						increment_g += (float)tb[coordinate + 1] * weight[abs(k)] * weight[abs(m)];
+						increment_b += (float)tb[coordinate + 2] * weight[abs(k)] * weight[abs(m)];
+					}
+				}
+			}
+			const int coordinate = (i * width + j) * 4;
+			fcb[coordinate] = cb[coordinate] + indensity * increment_r;
+			fcb[coordinate + 1] = cb[coordinate + 1] + indensity * increment_g;
+			fcb[coordinate + 2] = cb[coordinate + 2] + indensity * increment_b;
+		}
+	}
+	for (unsigned int i = 0; i < size; ++i)
+	{
+		cb[i] = (unsigned char)min(255.0f, roundf(fcb[i]));
+	}
+	delete[]tb;
+	delete[]fcb;
 }

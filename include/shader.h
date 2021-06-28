@@ -150,6 +150,15 @@ public:
 	glm::vec4 fragment(struct frag_in pixel) override;
 };
 
+class ShaderAll :public ShaderBumpedNormal {
+public:
+	Texture2D* specularTex;
+	Texture2D* emissionTex;
+	unsigned int maxLightCount = 2;
+	glm::vec4 fragment(struct frag_in pixel) override;
+protected:
+	glm::vec3 calcLight(int lightIndex, glm::vec3& pos, glm::vec2& uv, glm::vec3& normal, glm::vec3& viewDir);
+};
 
 
 #endif /*__SHADER_H__*/

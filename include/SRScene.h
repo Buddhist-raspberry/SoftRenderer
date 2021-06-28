@@ -7,7 +7,7 @@
 //场景类
 class SRScene
 {
-private:
+public:
 	int numMeshes = 0;
 	std::vector<SRMesh*> mMeshes;    /*场景中的模型*/
 

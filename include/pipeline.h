@@ -124,6 +124,18 @@ private:
 public:
 	void setAlphaTest(bool flag, float cutOff=0.5f) { alphaTest = flag; alphaCutOff = cutOff; }
 	void setAlphaBlend(bool flag) { alphaBlend = flag; }
+private:
+	bool hasBloom = false;
+	float bloom_indensity;
+	float bloom_threshold;
+public:
+	unsigned char* threshold(unsigned char cb[], float T);
+	void bloom(unsigned char cb[], float indensity, float T );
+	void setBloom(bool _bloom, float indensity, float threshold) {
+		hasBloom = _bloom;
+		bloom_indensity = indensity;
+		bloom_threshold = threshold;
+	}
 };
 
 

@@ -10,6 +10,7 @@ namespace VecColor {
 	const glm::vec4 Red(1.0f, 0, 0, 1.0f);
 	const glm::vec4 Green(0, 1.0f, 0, 1.0f);
 	const glm::vec4 Blue(0, 0, 1.0f, 1.0f);
+	const glm::vec4 Yellow(1.0, 1.0f, 0, 1.0f);
 	const glm::vec4 LightSkyBlue(0.6f, 0.9f, 1.0f, 1.0f);
 	const glm::vec4 LightSlateBlue(0.5f, 0.5f, 1.0f, 1.0f);
 	glm::vec4 color_256_to_vec(unsigned char* color);     

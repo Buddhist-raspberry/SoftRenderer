@@ -229,3 +229,50 @@ glm::vec4 ShaderAlphaTest::fragment(struct frag_in pixel) {
 
 	return glm::vec4(ambient + diffuse, albedo.a);
 }
+
+
+glm::vec4 ShaderAll::fragment(struct frag_in pixel) {
+	glm::vec3& pos = pixel.worldPos;
+	//法线纹理采样
+	glm::vec3& normalSample = glm::vec3(normalTex->sample(pixel.uv.x, pixel.uv.y));
+	glm::vec3& normal = ShaderBumpedNormal::calcBumpedNormal(pixel.worldNormal, pixel.worldTangent, normalSample);
+	glm::vec3& cameraPos = Pipeline::getInstance()->GetCameraPos();
+	glm::vec3 viewDir = glm::normalize(cameraPos - pos);
+
+	//环境光
+	glm::vec3 ambient = Pipeline::getInstance()->ambient->GetColor();
+
+	unsigned int worldLightCount = Pipeline::getInstance()->GetLightCount();
+
+	glm::vec3 result = ambient;
+	for (unsigned int i = 0; i < maxLightCount&&i < worldLightCount; i++) {
+		result += calcLight(i, pos,pixel.uv , normal, viewDir);
+	}
+
+
+
+	glm::vec3 emission = glm::vec3(emissionTex->sample(pixel.uv));
+
+	return glm::vec4(result + emission, 1.0f);
+}
+
+glm::vec3  ShaderAll::calcLight(int lightIndex, glm::vec3& pos, glm::vec2& uv , glm::vec3& normal, glm::vec3& viewDir) {
+	Light* light = Pipeline::getInstance()->GetLight(lightIndex);
+	glm::vec3& lightDir = glm::normalize(light->GetDirection(pos));
+	glm::vec3& lightColor = light->GetColor(pos);
+
+	//漫反射
+	glm::vec3 albedo = glm::vec3(mainTex->sample(uv))*mainColor;
+	glm::vec3 diffuse = lightColor * albedo * glm::clamp(glm::dot(normal, lightDir), 0.0f, 1.0f);
+
+
+	//镜面反射
+	glm::vec3 reflectDir = glm::normalize(glm::reflect(-lightDir, normal));
+	//glm::vec3 specular = lightColor * specularColor *glm::vec3(specularTex->sample(uv))*
+	//	glm::pow(glm::clamp(glm::dot(reflectDir, viewDir), 0.0f, 1.0f), gloss);
+	glm::vec3 specular = lightColor * specularColor *
+		glm::pow(glm::clamp(glm::dot(reflectDir, viewDir), 0.0f, 1.0f), gloss);
+
+	return diffuse + specular;
+
+}

@@ -12,7 +12,7 @@
 
 
 const int width = 800;
-const int height = 600;
+const int height = 800;
 
 glm::vec3       eye(0, 4, 8);       /*摄像机位置*/
 glm::vec3    center(0, 0, 0);		/*摄像机朝向中心点*/

@@ -14,9 +14,11 @@ bool SRScene::ReadSceneFromFile(const std::string& pFile) {
 		aiProcess_Triangulate |
 		aiProcess_JoinIdenticalVertices |
 		aiProcess_SortByPType);
+	
 
 	if (!scene) {
 		std::cerr << "Read scene error!\n";
+		std::cerr << importer.GetErrorString()<<"\n";
 		return false;
 	}
 	if (!scene->HasMeshes()) {
