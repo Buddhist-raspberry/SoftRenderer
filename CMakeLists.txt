@@ -68,9 +68,11 @@ add_subdirectory(examples/03_Phong)
 add_subdirectory(examples/04_Texture) 
 add_subdirectory(examples/05_BumpedNormal) 
 add_subdirectory(examples/06_ShadowMap) 
+add_subdirectory(examples/07_Bloom) 
 add_subdirectory(examples/08_PointLight) 
 add_subdirectory(examples/09_SpotLight) 
 add_subdirectory(examples/10_MultiLight) 
 add_subdirectory(examples/11_Transparent) 
 add_subdirectory(examples/12_AmbientOcclusion) 
 
+>>>>>>> 54916ef7604796630a5aeb5b4666acacc6b63e42
