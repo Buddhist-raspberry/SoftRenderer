@@ -12,7 +12,7 @@
 
 ## About The Project
 
-A soft-renderer built from scratch using C++ 11. The course project of computer graphics course in the School of Software (Media Arts and Sciences Direction) of Tongji University in the spring and summer semester of the 2020-2021. This project is supervised by Professor Jinyuan Jia. The dev team members are Kaibin Zhou, Jiajie Li, Xiaoyu Qi and Lai Ye.
+A soft-renderer built from scratch using C++ 11. The course project of computer graphics course in the School of Software (Media Arts and Sciences Direction) of Tongji University in the spring and summer semester of the 2020-2021. This project is supervised by Professor Jinyuan Jia. The dev team members are Kaibin Zhou, Jiajie Li, Xiaoyu Jia and Lai Ye.
 
 <img src="images/finalScene.png" alt="Logo" width="100%">
 
