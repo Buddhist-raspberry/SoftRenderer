@@ -36,27 +36,45 @@ int main(int argc, char** argv) {
 	pipeline->SetProjection(60.0f, width / height, 0.1f, 10.0f);
 	pipeline->SetViewport(0, 0, width, height);
 
-	char* model_name = "../../obj/cube.obj";
-	char* main_texture_name = "../../obj/transparent_texture.png";
+
 
 	/*读取模型*/
 
 	/*渲染*/
 	unsigned char * colorbuffer = new unsigned char[4 * width*height];
 
-	ShaderAlphaTest * shader = new ShaderAlphaTest ();
-	Texture2D* texture = new Texture2D();
-	texture->loadTexture(main_texture_name);
-	shader->mainTex = texture;
+
 
 	std::vector<SRMesh*> meshs;
-	scene = new SRScene();
-	if (scene->ReadSceneFromFile(model_name)) {
-		SRMesh* mesh = scene->GetMesh(0);
-		mesh->SetShader(shader);
-		meshs.push_back(mesh);
+	{
+		char* model_name = "../../obj/cube.obj";
+		char* main_texture_name = "../../obj/transparent_texture.png";
+		ShaderAlphaTest * shader = new ShaderAlphaTest();
+		Texture2D* texture = new Texture2D();
+		texture->loadTexture(main_texture_name);
+		shader->mainTex = texture;
+		scene = new SRScene();
+		if (scene->ReadSceneFromFile(model_name)) {
+			SRMesh* mesh = scene->GetMesh(0);
+			mesh->SetShader(shader);
+			meshs.push_back(mesh);
+		}
+		delete scene;
 	}
-
+	{
+		char* model_name = "../../obj/floor.obj";
+		ShaderPureColor * shader = new ShaderPureColor();
+		shader->color = glm::vec4(0, 0, 1.0f, 0.5f);
+		scene = new SRScene();
+		if (scene->ReadSceneFromFile(model_name)) {
+			SRMesh* mesh = scene->GetMesh(0);
+			mesh->SetShader(shader);
+			mesh->modelMatrix = glm::translate(glm::rotate( glm::mat4(1.0f),glm::radians(-90.0f),
+				glm::vec3(1.0f,0,0)), glm::vec3(0, -0.5f, 0));
+			meshs.push_back(mesh);
+		}
+		delete scene;
+	}
 
 
 
@@ -68,7 +86,7 @@ int main(int argc, char** argv) {
 	pipeline->Render(meshs, colorbuffer);
 
 	/*保存为图片*/
-	std::string result_name = "11_Transparent_AlphaBlend.png";
+	std::string result_name = "11_Transparent_AlphaBlend_Multi.png";
 	stbi_write_png(result_name.c_str(), width, height, 4, colorbuffer, 0);
 
 
@@ -80,8 +98,6 @@ int main(int argc, char** argv) {
 	app->Quit();
 
 	delete app;
-	delete scene;
-	delete shader;
 	stbi_image_free(colorbuffer);
 
 	return 0;
