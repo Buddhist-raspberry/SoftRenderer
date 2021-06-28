@@ -117,13 +117,11 @@ glm::vec4 ShaderPhongWithShadow::fragment(struct frag_in pixel) {
 	glm::vec3& normal = pixel.worldNormal;
 
 	//计算阴影系数
-	glm::vec4 posOnShadow = shadowVP * glm::vec4(pos, 1.0f);
+	glm::vec4 posOnShadow = shadowVPV * glm::vec4(pos, 1.0f);
 	float depth = -posOnShadow.z / Pipeline::getInstance()->GetDepth();
 	posOnShadow /= posOnShadow.w;
 	float shadowSample = shadowMap->sample(glm::vec2(posOnShadow)).x;
-	float shadow = 0.3f + 0.7f *(shadowSample >depth);
-	std::cout << posOnShadow.x<<" " << posOnShadow.y<<" "<<posOnShadow.z<<"\n";
-	//std::cout << "Sample:" << shadowSample << "\tDepth:" << depth << "\n";
+	float shadow = 0.8f + 0.2f *(shadowSample > depth);
 	//环境光
 	glm::vec3 ambient = Pipeline::getInstance()->ambient->GetColor();
 
@@ -139,38 +137,43 @@ glm::vec4 ShaderPhongWithShadow::fragment(struct frag_in pixel) {
 	glm::vec3 viewDir = glm::normalize(cameraPos - pos);
 	glm::vec3 reflectDir = glm::normalize(glm::reflect(-lightDir, normal));
 	glm::vec3 specular = lightColor * specularColor * glm::pow(glm::clamp(glm::dot(reflectDir, viewDir), 0.0f, 1.0f), gloss);
-	//return glm::vec4(ambient + (diffuse + specular)*shadow, 1.0f);
-	return glm::vec4(glm::vec3(shadow), 1.0f);
+	return glm::vec4(ambient + (diffuse + specular)*shadow, 1.0f);
 }
 
 
 glm::vec4 ShaderBumpedNormalWithShadow::fragment(struct frag_in pixel) {
 
 	glm::vec3& pos = pixel.worldPos;
+
+	//计算阴影系数
+	glm::vec4 posOnShadow = shadowVPV * glm::vec4(pos, 1.0f);
+	float depth = -posOnShadow.z / Pipeline::getInstance()->GetDepth();
+	posOnShadow /= posOnShadow.w;
+	float shadowSample = shadowMap->sample(glm::vec2(posOnShadow)).x;
+	float shadow = 0.8f + 0.2f *(shadowSample > depth);
+
+	//法线纹理采样
 	glm::vec3& normalSample = glm::vec3(normalTex->sample(pixel.uv.x, pixel.uv.y));
 	glm::vec3& normal = calcBumpedNormal(pixel.worldNormal, pixel.worldTangent, normalSample);
 
-	//计算阴影系数
-	glm::vec4 posOnShadow = shadowVP * glm::vec4(pos,1.0f);
-	float shadowSample =  shadowMap->sample(glm::vec2(posOnShadow)).x;
-
-	float shadow = 0.3f + 0.7f *(shadowSample < posOnShadow.z / Pipeline::getInstance()->GetDepth());
-
+	//环境光
 	glm::vec3 ambient = Pipeline::getInstance()->ambient->GetColor();
 
 	Light* light = Pipeline::getInstance()->GetLight(0);
 	glm::vec3& lightDir = glm::normalize(light->GetDirection(pos));
 	glm::vec3& lightColor = light->GetColor(pos);
 
+	//漫反射
 	glm::vec3 albedo = glm::vec3(mainTex->sample(pixel.uv))*mainColor;
 	glm::vec3 diffuse = lightColor * albedo * glm::clamp(glm::dot(normal, lightDir), 0.0f, 1.0f);
 
+	//镜面反射
 	glm::vec3& cameraPos = Pipeline::getInstance()->GetCameraPos();
 	glm::vec3 viewDir = glm::normalize(cameraPos - pos);
 	glm::vec3 reflectDir = glm::normalize(glm::reflect(-lightDir, normal));
 	glm::vec3 specular = lightColor * specularColor * glm::pow(glm::clamp(glm::dot(reflectDir, viewDir), 0.0f, 1.0f), gloss);
 
-	return glm::vec4(ambient + (diffuse + specular)*shadow, 1.0f);
+	return glm::vec4(ambient + diffuse + specular, 1.0f);
 }
 
 glm::vec4 ShaderPhongMulti::fragment(struct frag_in pixel) {

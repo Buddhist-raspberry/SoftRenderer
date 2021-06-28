@@ -28,8 +28,7 @@ SRApp* app;
 
 SRMesh* GetHead() {
 	char* model_name = "../../obj/african_head/african_head.obj";
-	char* main_texture_name = "../../obj/african_head/african_head_diffuse.tga";
-	char* normal_texture_name = "../../obj/african_head/african_head_nm_tangent.tga";
+
 
 	SRScene* scene = new SRScene();
 	scene->ReadSceneFromFile(model_name);
@@ -41,15 +40,13 @@ SRMesh* GetHead() {
 }
 
 SRMesh* GetCube() {
-	char* model_name = "../../obj/cube/cube.obj";
+	char* model_name = "../../obj/floor.obj";
 
 	SRScene* scene = new SRScene();
 	scene->ReadSceneFromFile(model_name);
 	SRMesh* cube = scene->GetMesh(0);
-	glm::mat4 modelMatrix = glm::mat4(1.0f);
-	modelMatrix = glm::scale(modelMatrix, glm::vec3(20.0f, 0.2f, 20.0f));
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(0, -8.0f, 0));
-	cube->modelMatrix = modelMatrix;
+	cube->modelMatrix = glm::translate(glm::scale(glm::mat4(1.0f), 
+		glm::vec3(2.0f, 1.0f, 2.0f)), glm::vec3(0, 0, 0));
 
 	delete scene;
 	return cube;
@@ -58,7 +55,7 @@ SRMesh* GetCube() {
 int main(int argc, char** argv) {
 
 	std::vector<SRMesh*> meshs;
-	//meshs.push_back(GetCube());
+	meshs.push_back(GetCube());
 	meshs.push_back(GetHead());
 
 	pipeline->SetProjection(60.0f, width / height, 0.01f, 10.0f);
@@ -68,8 +65,8 @@ int main(int argc, char** argv) {
 	unsigned char * colorbuffer = new unsigned char[4 * width*height];
 
 
-	pipeline->ambient = new AmbientLight(VecColor::White, 0);
-	pipeline->AddLight(new DirectionalLight(VecColor::White, 1.0f, glm::vec3(-1, 1, 0)));
+	pipeline->ambient = new AmbientLight(VecColor::White, 0.2f);
+	pipeline->AddLight(new DirectionalLight(VecColor::White, 0.8f, glm::vec3(1, 1, 0)));
 	pipeline->SetBGColor(VecColor::White);
 
 	//äÖÈ¾ShadowMap
@@ -88,18 +85,32 @@ int main(int argc, char** argv) {
 		std::string result_name = "06_ShadowMap_Depth.png";
 		stbi_write_png(result_name.c_str(), width, height, 4, shadowMap, 0);
 	}
-	glm::mat4 shadowVP = pipeline->getVP();
+	glm::mat4 shadowVPV = pipeline->getVPV();
 	DepthMap* shadowMapTexture = new DepthMap(shadowMap, width, height);
 	{
-		for (int i = 0; i < meshs.size(); i++) {
-			ShaderPhongWithShadow* shader = new ShaderPhongWithShadow();
-			shader->diffuseColor = VecColor::White;
-			shader->specularColor = VecColor::White;
-			shader->gloss = 5.0f;
-			shader->shadowMap = shadowMapTexture;
-			shader->shadowVP = shadowVP;
-			meshs.at(i)->SetShader(shader);
-		}
+		ShaderPhongWithShadow* shader = new ShaderPhongWithShadow();
+		shader->diffuseColor = VecColor::White;
+		shader->specularColor = VecColor::White;
+		shader->gloss = 5.0f;
+		shader->shadowMap = shadowMapTexture;
+		shader->shadowVPV = shadowVPV;
+		meshs.at(0)->SetShader(shader);
+	}
+
+	{
+		char* main_texture_name = "../../obj/african_head/african_head_diffuse.tga";
+		char* normal_texture_name = "../../obj/african_head/african_head_nm_tangent.tga";
+		ShaderBumpedNormalWithShadow * shader = new ShaderBumpedNormalWithShadow();
+		shader->mainColor = VecColor::White;
+		shader->specularColor = VecColor::White;
+		shader->gloss = 10.0f;
+		shader->mainTex = new Texture2D();
+		shader->mainTex->loadTexture(main_texture_name);
+		shader->normalTex = new Texture2D();
+		shader->normalTex->loadTexture(normal_texture_name);
+		shader->shadowMap = shadowMapTexture;
+		shader->shadowVPV = shadowVPV;
+		meshs.at(1)->SetShader(shader);
 	}
 
 

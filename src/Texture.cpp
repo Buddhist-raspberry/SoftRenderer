@@ -30,7 +30,10 @@ glm::vec4 Texture2D::sample(float u, float v){
 	int y = (int)(v * height - 0.5f) % height;
 	x = x < 0 ? width + x : x;
 	y = y < 0 ? height + y : y;
-	return VecColor::color_256_to_vec(data + 4 * (x + (height-1-y) * width - 1));
+	int index =x + (height - 1 - y) * width - 1;
+	if (index >= width * height|| index<0)
+		return VecColor::Black;
+	return VecColor::color_256_to_vec(data + 4 * index);
 }
 
 glm::vec4 Texture2D::sample(const glm::vec2& uv) {
@@ -96,5 +99,7 @@ glm::vec4 CubemapTexture::sample3D(const glm::vec3& dir) {
 
 glm::vec4 DepthMap::sample(glm::vec2& xy) {
 	int index = int(xy.y) + int(xy.x)*width;
+	if (index >= width * height||index < 0)
+		return VecColor::White;
 	return VecColor::color_256_to_vec(data + 4 *index);
 }

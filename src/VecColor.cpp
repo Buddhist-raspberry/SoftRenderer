@@ -1,5 +1,5 @@
 #include "VecColor.h"
-
+#include <iostream>
 
 namespace VecColor {
 	glm::vec4 color_256_to_vec(unsigned char* color) {

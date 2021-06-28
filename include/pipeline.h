@@ -28,8 +28,8 @@ public:
 	const glm::mat4& getMVP() {
 		return ProjectionMatrix * ViewMatrix*ModelMatrix;
 	}
-	const glm::mat4& getVP() {
-		return ProjectionMatrix * ViewMatrix;
+	const glm::mat4& getVPV() {
+		return ViewportMatrix * ProjectionMatrix * ViewMatrix;
 	}
 
 public:

@@ -39,10 +39,10 @@ struct frag_in {
 	glm::vec3 worldNormal; //世界空间法线
 	glm::vec3 worldTangent; //世界空间切线
 	glm::vec3 worldPos;		//世界空间坐标
-	glm::vec3 clipPos;	//裁剪空间坐标
+	glm::vec4 clipPos;	//裁剪空间坐标
 	glm::vec2 uv;
 	frag_in() {}
-	frag_in(glm::vec3 _worldNormal, glm::vec3 _worldTangent , glm::vec3 _worldPos, glm::vec2 _uv, glm::vec3 _clipPos) {
+	frag_in(glm::vec3 _worldNormal, glm::vec3 _worldTangent , glm::vec3 _worldPos, glm::vec2 _uv, glm::vec4 _clipPos) {
 		worldNormal = _worldNormal;
 		worldNormal = _worldTangent;
 		worldPos = _worldPos;
@@ -119,14 +119,14 @@ public:
 
 class ShaderPhongWithShadow :public ShaderPhong {
 public:
-	glm::mat4 shadowVP;
+	glm::mat4 shadowVPV;
 	DepthMap* shadowMap;
 	glm::vec4 fragment(struct frag_in pixel) override;
 };
 
 class ShaderBumpedNormalWithShadow :public ShaderBumpedNormal {
 public:
-	glm::mat4 shadowVP;
+	glm::mat4 shadowVPV;
 	DepthMap* shadowMap;
 	glm::vec4 fragment(struct frag_in pixel) override;
 };

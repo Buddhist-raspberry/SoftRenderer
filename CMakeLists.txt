@@ -71,4 +71,6 @@ add_subdirectory(examples/06_ShadowMap)
 add_subdirectory(examples/08_PointLight) 
 add_subdirectory(examples/09_SpotLight) 
 add_subdirectory(examples/10_MultiLight) 
+add_subdirectory(examples/11_Transparent) 
+add_subdirectory(examples/12_AmbientOcclusion) 
 
