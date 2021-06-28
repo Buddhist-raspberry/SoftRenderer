@@ -180,11 +180,21 @@ void Pipeline::triangle(struct vert_out* attributes, ShaderBase *shader, unsigne
 
 			//Æ¬Ôª×ÅÉ«
 			glm::vec4 color_frag = shader->fragment(attri_frag);
+			color_frag = glm::clamp(color_frag, glm::vec4(0), glm::vec4(1.0f));
 			if (alphaTest&&color_frag.a < alphaCutOff)
 				continue;
-			color_frag =  glm::clamp(color_frag, glm::vec4(0) , glm::vec4(1.0f) );
+			glm::vec4 color_result;
+			if (alphaBlend) {
+				glm::vec4 color_orig = getPixel(colorbuffer, P.x, P.y);
+				color_result = color_frag * color_frag.a + color_orig * (1 - color_frag.a);
+				color_result.a = color_orig.a + color_frag.a - color_orig.a * color_frag.a;
+				//std::cout << color_orig.a << "," << color_frag.a << "\n";
+			}
+			else {
+				color_result = color_frag;
+			}
 			for (int i = 0; i < 4; i++) {
-				setPixel(colorbuffer, P.x, P.y, color_frag);
+				setPixel(colorbuffer, P.x, P.y, color_result);
 			}
 			zbuffer[P.x + P.y*width_viewport] = depth_frag;
 		}
@@ -215,6 +225,14 @@ void Pipeline::setPixel(unsigned char* colorbuffer, int x, int y, const glm::vec
 		c[i] = (unsigned int)(color[i] * 255.0f);
 	}
 	memcpy(colorbuffer + (4 * (x+width_viewport*y-1)), c, sizeof(unsigned char) * 4);
+}
+
+glm::vec4 Pipeline::getPixel(unsigned char* colorbuffer, int x, int y) {
+	glm::vec4 color;
+	for (int i = 0; i < 4; i++) {
+		color[i] = (float)colorbuffer[4 * (x + width_viewport * y - 1) + i]/255.0f;
+	}
+	return color;
 }
 
 void Pipeline::Render(SRMesh* mesh, unsigned char *colorbuffer) {

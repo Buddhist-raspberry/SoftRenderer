@@ -64,11 +64,11 @@ int main(int argc, char** argv) {
 	pipeline->AddLight(new DirectionalLight(VecColor::White,0.8f,glm::vec3(1.0f,1.0f,1.0f)));
 
 	pipeline->SetBGColor(VecColor::LightSlateBlue);
-	pipeline->setAlphaTest(true,0.6f);
+	pipeline->setAlphaBlend(true);
 	pipeline->Render(meshs, colorbuffer);
 
 	/*±£´æÎªÍ¼Æ¬*/
-	std::string result_name = "11_Transparent.png";
+	std::string result_name = "11_Transparent_AlphaBlend.png";
 	stbi_write_png(result_name.c_str(), width, height, 4, colorbuffer, 0);
 
 

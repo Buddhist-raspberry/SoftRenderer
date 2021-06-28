@@ -105,7 +105,7 @@ private:
 	void clearZbuffer();  //清空深度缓冲区
 	void clearColorbuffer(unsigned char *colorbuffer, const glm::vec4& color); //清空颜色缓冲区
 	void setPixel(unsigned char* colorbuffer, int x, int y, const glm::vec4& color);
-
+	glm::vec4 getPixel(unsigned char* colorbuffer, int x, int y);
 
 public:
 	AmbientLight* ambient;
