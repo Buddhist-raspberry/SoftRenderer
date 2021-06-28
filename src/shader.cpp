@@ -210,3 +210,22 @@ glm::vec3  ShaderPhongMulti::calcLight(int lightIndex, glm::vec3& pos , glm::vec
 	return diffuse + specular;
 
 }
+
+
+glm::vec4 ShaderAlphaTest::fragment(struct frag_in pixel) {
+	glm::vec3& pos = pixel.worldPos;
+	glm::vec3& normal = pixel.worldNormal;
+
+	//环境光
+	glm::vec3 ambient = Pipeline::getInstance()->ambient->GetColor();
+
+	Light* light = Pipeline::getInstance()->GetLight(0);
+	glm::vec3& lightDir = glm::normalize(light->GetDirection(pos));
+	glm::vec3& lightColor = light->GetColor(pos);
+
+	//漫反射
+	glm::vec4 albedo = mainTex->sample(pixel.uv);
+	glm::vec3 diffuse = lightColor * glm::vec3(albedo)* glm::clamp(glm::dot(normal, lightDir), 0.0f, 1.0f);
+
+	return glm::vec4(ambient + diffuse, albedo.a);
+}

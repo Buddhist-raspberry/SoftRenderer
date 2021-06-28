@@ -143,4 +143,12 @@ private:
 	glm::vec3 calcLight(int lightIndex, glm::vec3& pos, glm::vec3& normal, glm::vec3& viewDir);
 };
 
+//透明度测试着色器
+class ShaderAlphaTest :public ShaderBase {
+public:
+	Texture2D* mainTex;
+	glm::vec4 fragment(struct frag_in pixel) override;
+};
+
+
 #endif /*__SHADER_H__*/

@@ -74,5 +74,3 @@ add_subdirectory(examples/09_SpotLight)
 add_subdirectory(examples/10_MultiLight) 
 add_subdirectory(examples/11_Transparent) 
 add_subdirectory(examples/12_AmbientOcclusion) 
-
->>>>>>> 54916ef7604796630a5aeb5b4666acacc6b63e42

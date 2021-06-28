@@ -180,6 +180,8 @@ void Pipeline::triangle(struct vert_out* attributes, ShaderBase *shader, unsigne
 
 			//Æ¬Ôª×ÅÉ«
 			glm::vec4 color_frag = shader->fragment(attri_frag);
+			if (alphaTest&&color_frag.a < alphaCutOff)
+				continue;
 			color_frag =  glm::clamp(color_frag, glm::vec4(0) , glm::vec4(1.0f) );
 			for (int i = 0; i < 4; i++) {
 				setPixel(colorbuffer, P.x, P.y, color_frag);
